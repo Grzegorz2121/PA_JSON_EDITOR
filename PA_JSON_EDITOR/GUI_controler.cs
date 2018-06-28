@@ -18,6 +18,36 @@ namespace Pa_Looker_2
 {
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
+    static class Tools
+    {
+        public static bool IsPrimitive(KeyValuePair<string, JToken> input_token)
+        {
+            if (input_token.Value.Type == JTokenType.Boolean || input_token.Value.Type == JTokenType.Float || input_token.Value.Type == JTokenType.String || input_token.Value.Type == JTokenType.Integer)
+                return true;
+            else
+                return false;
+        }
+
+        public static bool IsArray(KeyValuePair<string, JToken> input_token)
+        {
+            if (input_token.Value.Type == JTokenType.Array)
+                return true;
+            else
+                return false;
+        }
+
+        public static bool IsObject(KeyValuePair<string, JToken> input_token)
+        {
+            if (input_token.Value.Type == JTokenType.Object)
+                return true;
+            else
+                return false;
+        }
+    }
+
+
+
+
 
     class GUI_node_folder
     {
@@ -162,6 +192,78 @@ namespace Pa_Looker_2
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
 
+ 
+    class GUI_complex_node
+    {
+        //GUI elements
+        ListBox list_box;
+        Label label;
+
+        //Form reference for GUI
+        Form form;
+        Point location;
+
+        //Callback ref to parent (save procedure)
+        ICallback parent;
+
+        //Input data (for processing)
+        KeyValuePair<string, JToken> json_element;
+
+        List<JToken> json_values;
+
+        GUI_complex_node child_complex;
+        //GUI_primitive_node child_primitive;
+
+
+        public GUI_complex_node(Form in_form, KeyValuePair<string, JToken> in_pair, object in_parent, Point in_loc)
+        {
+            parent = (ICallback)in_parent;
+            form = in_form;
+            location = in_loc;
+            json_element = in_pair;
+
+            label = new Label();
+            label.Location = new Point(location.X, location.Y - 20);
+            list_box = new ListBox();
+            list_box.Location = location;
+
+            foreach(KeyValuePair<string, JToken> token in json_element.Value as JObject)
+            {
+                list_box.Items.Add(token.Key);
+            }
+
+            list_box.SelectedIndexChanged += new EventHandler(list_box_index_change);
+
+            //Display the list and label
+            form.Controls.Add(list_box);
+            form.Controls.Add(label);
+        }
+
+        void list_box_index_change(object sender, EventArgs e)
+        {
+
+        }
+
+        public void Callback(string child_key, JToken child_token)
+        {
+
+        }
+
+      /*  public string[] ExtractProperties(JObject job)
+        {
+
+        }*/
+
+        public void Dispose()
+        {
+            form.Controls.Remove(label);
+            form.Controls.Remove(list_box);
+        }
+    }
+
+    
+    ////////////////////////////////////////////////////////////////////////////////////////////////
+
     class GUI_node_json : ICallback
     {
         Button save_button;
@@ -173,6 +275,8 @@ namespace Pa_Looker_2
         Point location;
 
         JObject jobject;
+
+       // GUI_complex_node node;
 
         GUI_node_property child_property;
         GUI_node_editbox child_editbox;
@@ -224,25 +328,44 @@ namespace Pa_Looker_2
             string key = (string)list_box.SelectedItem;
 
             //Console.WriteLine(jobject[key].Type);
+            var temp = jobject[key] as JObject;
+
+            List<JObject> list = new List<JObject>();
+
+            foreach(JToken t in jobject.Children())
+            {
+                list.Add(t as JObject);
+            }
+
+            List<JObject> list2 = new List<JObject>();
+
+            foreach (JToken t in jobject[key])
+            {
+                list2.Add(t as JObject);
+            }
 
             label.Text = jobject[key].Type.ToString();
             // THAT IS TOKEN TYPE! good for labels, terrible for converting to objects!
 
+            //var temp = jobject[key];
+
             if (jobject[key].Type == JTokenType.Object)
             {
-                //Console.WriteLine("COMPLEX");
                 child_property = new GUI_node_property(form, new KeyValuePair<string, JToken>(key, jobject[key]), this, new Point(location.X + 130, location.Y));
+                //Console.WriteLine("COMPLEX");
+                // child_property = new GUI_node_property(form, new KeyValuePair<string, JToken>(key, jobject[key]), this, new Point(location.X + 130, location.Y));
             }
             if (jobject[key].Type == JTokenType.Array)
             {
-                //Console.WriteLine("COMPLEX");
                 child_editarray = new GUI_node_editarray(form, new KeyValuePair<string, JToken>(key, jobject[key]), this, new Point(location.X + 130, location.Y));
-               // child_property = new GUI_node_property(form, new KeyValuePair<string, JToken>(key, jobject[key]), this, new Point(location.X + 130, location.Y));
+                //Console.WriteLine("COMPLEX");
+                // child_editarray = new GUI_node_editarray(form, new KeyValuePair<string, JToken>(key, jobject[key]), this, new Point(location.X + 130, location.Y));
+                // child_property = new GUI_node_property(form, new KeyValuePair<string, JToken>(key, jobject[key]), this, new Point(location.X + 130, location.Y));
             }
             if (jobject[key].Type == JTokenType.Float || jobject[key].Type == JTokenType.Boolean || jobject[key].Type == JTokenType.Integer || jobject[key].Type == JTokenType.String)
             {
                 //Console.WriteLine("PRIMITIVE");
-                child_editbox = new GUI_node_editbox(form, new KeyValuePair<string, JToken>(key, jobject[key]), this, new Point(location.X, location.Y + 130));
+                 child_editbox = new GUI_node_editbox(form, new KeyValuePair<string, JToken>(key, jobject[key]), this, new Point(location.X, location.Y + 130));
                 //Console.WriteLine(jobject[key]);
             }
         }
@@ -383,6 +506,8 @@ namespace Pa_Looker_2
 
             label.Text = jobject_part[selected_key].Type.ToString();
             // THAT IS TOKEN TYPE! good for labels, terrible for converting to objects!
+
+            var temp = jobject_part[selected_key];
 
             if (jobject_part[selected_key].Type == JTokenType.Object)
             {
@@ -570,6 +695,8 @@ namespace Pa_Looker_2
         ICallback parent;
 
         public bool IsPrimitive = false;
+        public bool IsJagged = false;
+        public bool IsObject = false;
 
         public KeyValuePair<string, JToken> token_pair;
 
@@ -599,16 +726,35 @@ namespace Pa_Looker_2
             if (IsArrayPrimitive(token_pair.Value))
             {
                 IsPrimitive = true;
+                IsJagged = false;
+                IsObject = false;
                 label.Text = "Primitive Array";
                 foreach (JToken ob in jTokens)
                 {
                     listBox.Items.Add(ob);
                 }
             }
-            else
+            if (IsArrayJagged(token_pair.Value))
             {
                 IsPrimitive = false;
+                IsJagged = true;
+                IsObject = false;
+                label.Text = "Jagged Array";
+                foreach (JToken ob in jTokens)
+                {
+                    listBox.Items.Add(ob);
+                }
+            }
+            if (IsArrayComplex(token_pair.Value))
+            {
+                IsPrimitive = false;
+                IsJagged = false;
+                IsObject = true;
                 label.Text = "Complex Array";
+                foreach (JToken ob in jTokens)
+                {
+                    listBox.Items.Add(ob);
+                }
             }
 
             form.Controls.Add(listBox);
@@ -664,6 +810,34 @@ namespace Pa_Looker_2
             return false;
         }
 
+        public bool IsArrayJagged(JToken in_token_arr)
+        {
+            List<JToken> temp = new List<JToken>();
+            foreach (JToken ob in in_token_arr.Values<object>())
+            {
+                temp.Add(ob);
+            }
+            if (temp[0].Type == JTokenType.Array)
+            {
+                return true;
+            }
+            return false;
+        }
+
+        public bool IsArrayComplex(JToken in_token_arr)
+        {
+            List<JToken> temp = new List<JToken>();
+            foreach (JToken ob in in_token_arr.Values<object>())
+            {
+                temp.Add(ob);
+            }
+            if (temp[0].Type == JTokenType.Object)
+            {
+                return true;
+            }
+            return false;
+        }
+
         void list_box_index_change(object sender, EventArgs e)
         {
 
@@ -682,7 +856,35 @@ namespace Pa_Looker_2
                 child_editbox = new GUI_node_editbox(form, new KeyValuePair<string, JToken>(selected_key.ToString(), jTokens[selected_key]), this, new Point(location.X, location.Y + 130));
             }
 
+            if (IsJagged)
+            {
+                if (child_editarray != null)
+                {
+                    child_editarray.Dispose();
+                    child_editarray = null;
+                }
+                int selected_key = listBox.SelectedIndex;
 
+                label.Text = jTokens[selected_key].Type.ToString();
+                // THAT IS TOKEN TYPE! good for labels, terrible for converting to objects!
+
+                child_editarray = new GUI_node_editarray(form, new KeyValuePair<string, JToken>(selected_key.ToString(), jTokens[selected_key]), this, new Point(location.X, location.Y + 130));
+            }
+            
+            if (IsObject && !IsPrimitive && !IsJagged)
+            {
+                if (child_property != null)
+                {
+                    child_property.Dispose();
+                    child_property = null;
+                }
+                int selected_key = listBox.SelectedIndex;
+
+                label.Text = jTokens[selected_key].Type.ToString();
+                // THAT IS TOKEN TYPE! good for labels, terrible for converting to objects!
+
+                child_property = new GUI_node_property(form, new KeyValuePair<string, JToken>(selected_key.ToString(), jTokens[selected_key]), this, new Point(location.X, location.Y + 130));
+            }
 
         }
 
@@ -696,6 +898,16 @@ namespace Pa_Looker_2
             {
                 child_editbox.Dispose();
                 child_editbox = null;
+            }
+            if (child_editarray != null)
+            {
+                child_editarray.Dispose();
+                child_editarray = null;
+            }
+            if (child_property != null)
+            {
+                child_property.Dispose();
+                child_property = null;
             }
             form.Controls.Remove(label);
             form.Controls.Remove(listBox);

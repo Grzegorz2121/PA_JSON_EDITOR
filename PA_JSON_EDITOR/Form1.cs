@@ -14,12 +14,15 @@ namespace Pa_Looker_2
 {
     public partial class Main_Form : Form
     {
+        public static Form main_form;
+
         GUI_node_folder node;
         string main_path;
 
         public Main_Form()
         {
             InitializeComponent();
+            main_form = this;
         }
 
         private void Pick_folder_button_Click(object sender, EventArgs e)

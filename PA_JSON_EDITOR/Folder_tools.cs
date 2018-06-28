@@ -9,7 +9,7 @@ namespace Pa_Looker_2
 {
     static class Folder_tools
     {
-
+        /*
         public static bool Is_units_folder(string path)
         {
             foreach(string c in Pa_types.Classes)
@@ -31,6 +31,7 @@ namespace Pa_Looker_2
             }
             return false;
         }
+        */
 
         public static bool Is_json_there(string path)
         {

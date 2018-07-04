@@ -13,6 +13,8 @@ using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using Newtonsoft;
 using static Pa_Looker_2.ICallback;
+using PA_JSON_EDITOR;
+
 
 namespace Pa_Looker_2
 {
@@ -214,7 +216,6 @@ namespace Pa_Looker_2
         GUI_complex_node child_complex;
         //GUI_primitive_node child_primitive;
 
-
         public GUI_complex_node(Form in_form, KeyValuePair<string, JToken> in_pair, object in_parent, Point in_loc)
         {
             parent = (ICallback)in_parent;
@@ -222,6 +223,7 @@ namespace Pa_Looker_2
             location = in_loc;
             json_element = in_pair;
 
+            
             label = new Label();
             label.Location = new Point(location.X, location.Y - 20);
             list_box = new ListBox();
@@ -274,7 +276,7 @@ namespace Pa_Looker_2
         Form form;
         Point location;
 
-        JObject jobject;
+        JToken jobject;
 
        // GUI_complex_node node;
 
@@ -282,12 +284,19 @@ namespace Pa_Looker_2
         GUI_node_editbox child_editbox;
         GUI_node_editarray child_editarray;
 
+        Container main_container;
+
         public GUI_node_json(Form in_form, string in_path, Point in_loc)
         {
             form = in_form;
             path = in_path;
             location = in_loc;
 
+            StreamReader sr = new StreamReader(path);
+            jobject = JsonConvert.DeserializeObject(sr.ReadToEnd()) as JToken;
+
+            main_container = new Container(jobject, new Point(30, 300), Main_Form.main_form);
+            /*
             save_button = new Button();
             save_button.Location = new Point(location.X, location.Y-50);
             save_button.Text = "Commit";
@@ -305,7 +314,7 @@ namespace Pa_Looker_2
             list_box.SelectedIndexChanged += new EventHandler(list_box_index_change);
             form.Controls.Add(list_box);
             form.Controls.Add(label);
-            form.Controls.Add(save_button);
+            form.Controls.Add(save_button);*/
         }
 
         void list_box_index_change(object sender, EventArgs e)
@@ -329,7 +338,6 @@ namespace Pa_Looker_2
 
             //Console.WriteLine(jobject[key].Type);
             var temp = jobject[key] as JObject;
-
             List<JObject> list = new List<JObject>();
 
             foreach(JToken t in jobject.Children())
@@ -385,13 +393,14 @@ namespace Pa_Looker_2
                 jobject[key].Replace(token);
             }
             else
-            {
-                jobject.Remove(key);
+            {/*
+                jobject.Remove(key);*/
             }
         }
-
+        /*
         public string[] ExtractValues(string path)
         {
+            /*
             string[] keys;
             List<string> key_list = new List<string>();
             StreamReader sr = new StreamReader(path);
@@ -405,7 +414,7 @@ namespace Pa_Looker_2
             keys = key_list.ToArray();
             sr.Close();
             return keys;
-        }
+        }*/
 
         public void Dispose()
         {

@@ -45,6 +45,10 @@ namespace Pa_Looker_2
 
         public static bool Is_folder_there(string path)
         {
+            if(path==null)
+            {
+                return false;
+            }
             string[] directories = Directory.GetDirectories(path);
             if (directories.Length > 0)
             {

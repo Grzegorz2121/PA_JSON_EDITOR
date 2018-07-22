@@ -16,7 +16,9 @@ namespace Pa_Looker_2
     public partial class Main_Form : Form
     {
         public static Form main_form;
+        public static ScannerForm scannerForm;
 
+        public static PA_JSON_EDITOR.Container main_container;
         GUI_node_folder node;
         string main_path;
 
@@ -47,5 +49,20 @@ namespace Pa_Looker_2
             //list = new GUI_components.FolderPickList(new Point(10, 50), "main", main_path , folders, this);
         }
 
+        private void showAllButton_Click(object sender, EventArgs e)
+        {
+            main_container.Show();
+        }
+
+        private void hideAllButton_Click(object sender, EventArgs e)
+        {
+            main_container.Hide();
+        }
+
+        private void Show_Scanner_button_Click(object sender, EventArgs e)
+        {
+            scannerForm = new ScannerForm(this, main_path);
+            scannerForm.Show();
+        }
     }
 }

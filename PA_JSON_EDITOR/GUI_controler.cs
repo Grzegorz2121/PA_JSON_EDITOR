@@ -296,6 +296,7 @@ namespace Pa_Looker_2
             jobject = JsonConvert.DeserializeObject(sr.ReadToEnd()) as JToken;
 
             main_container = new Container(jobject, new Point(30, 300), Main_Form.main_form);
+            Main_Form.main_container = main_container;
             /*
             save_button = new Button();
             save_button.Location = new Point(location.X, location.Y-50);
@@ -421,6 +422,7 @@ namespace Pa_Looker_2
             form.Controls.Remove(label);
             form.Controls.Remove(list_box);
             form.Controls.Remove(save_button);
+            /*
             if (child_property != null)
             {
                 child_property.Dispose();
@@ -435,7 +437,10 @@ namespace Pa_Looker_2
             {
                 child_editarray.Dispose();
                 child_editarray = null;
-            }
+            }*/
+            main_container.Dispose();
+            main_container = null;
+            Main_Form.main_container = null;
         }
 
     }

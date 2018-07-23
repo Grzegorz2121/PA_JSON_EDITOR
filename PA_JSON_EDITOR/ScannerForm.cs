@@ -66,13 +66,14 @@ namespace PA_JSON_EDITOR
 
         public static HashSet<Property> featurelist = new HashSet<Property>();
 
-        
+        public ModStructureDetector modStructure;
 
         public ScannerForm(Form parent, string path)
         {
             main_form = parent;
             main_path = path;
             InitializeComponent();
+            modStructure = new ModStructureDetector(main_path);
         }
 
         private void Scan_button_Click(object sender, EventArgs e)

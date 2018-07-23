@@ -59,6 +59,7 @@
     </Compile>
     <Compile Include="GUI_controler.cs" />
     <Compile Include="ICallback.cs" />
+    <Compile Include="ModStructureDetector.cs" />
     <Compile Include="Pa_types.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

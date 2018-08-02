@@ -50,6 +50,8 @@
   <ItemGroup>
     <Compile Include="Container.cs" />
     <Compile Include="DataBaseControler.cs" />
+    <Compile Include="HashContainer.cs" />
+    <Compile Include="DataContainer.cs" />
     <Compile Include="Folder_tools.cs" />
     <Compile Include="MainForm.cs">
       <SubType>Form</SubType>
@@ -59,7 +61,8 @@
     </Compile>
     <Compile Include="GUI_controler.cs" />
     <Compile Include="ICallback.cs" />
-    <Compile Include="ModStructureDetector.cs" />
+    <Compile Include="ModStructureManager.cs" />
+    <Compile Include="Paths.cs" />
     <Compile Include="Pa_types.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

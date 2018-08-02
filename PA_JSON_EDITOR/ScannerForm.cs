@@ -17,6 +17,7 @@ using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using Newtonsoft;
 
+using static PA_JSON_EDITOR.ModStructureManager;
 using static PA_JSON_EDITOR.DataBaseControler;
 
 namespace PA_JSON_EDITOR
@@ -66,23 +67,25 @@ namespace PA_JSON_EDITOR
 
         public static HashSet<Property> featurelist = new HashSet<Property>();
 
-        public ModStructureDetector modStructure;
+        public ModStructureManager modStructure;
+
+        public HashContainer hashContainer;
 
         public ScannerForm(Form parent, string path)
         {
             main_form = parent;
             main_path = path;
             InitializeComponent();
-            modStructure = new ModStructureDetector(main_path);
+           // modStructure = new ModStructureManager(main_path);
         }
 
         private void Scan_button_Click(object sender, EventArgs e)
         {
-
+            
             List<string> classes = new List<string>();
             List<string> units = new List<string>();
             List<string> jsons = new List<string>();
-
+            
             List<string> temp = Directory.GetDirectories(main_path, "units", SearchOption.AllDirectories).ToList<string>();
 
             foreach (string u in temp)
@@ -98,10 +101,13 @@ namespace PA_JSON_EDITOR
             foreach(string u in units)
             {
                 var t2 = u.Remove(0, Directory.GetParent(u).FullName.ToString().Length + 1);
-                List<string> t = Directory.GetFiles(u, t2+"_tool_weapon.json").ToList<string>();
+                //List<string> t = Directory.GetFiles(u, t2+"_tool_weapon.json").ToList<string>();
+                List<string> t = Directory.GetFiles(u, "*.json").ToList<string>();
                 jsons.AddRange(t);
             }
-            
+
+            hashContainer = new HashContainer(jsons.ToArray<string>(), main_path);
+            /*
             foreach(string s in jsons)
             {
                 listBox1.Items.Add(Shorten_path(main_path,s));
@@ -110,15 +116,16 @@ namespace PA_JSON_EDITOR
                 temp3.Add(s);
                 richTextBox1.Lines = temp3.ToArray<string>();
 
+                
                 StreamReader sr = new StreamReader(s);
+
                 JToken jobject = JsonConvert.DeserializeObject(sr.ReadToEnd()) as JToken;
                 foreach(JProperty p in jobject)
                 {
-
                     featurelist.Add(new Property(p.Name, p.Value.Type.ToString()));
                 }  
             }
-
+        */
             foreach(Property p in featurelist)
             {
                 listBox2.Items.Add(p.name);
@@ -136,6 +143,8 @@ namespace PA_JSON_EDITOR
         
         private void Save_Properties_button_Click(object sender, EventArgs e)
         {
+            hashContainer.CreateTheDump(main_path);
+            /*
             DataBaseControler.SetDataBasePath(Application.StartupPath);
             DataBaseControler.CreateDataBase();
             // "name":"health_fraction", "type":"float", "description":"The amount of health remaining after being converted to wreckage.", "parent":"wreckage", "advanced":false, "context":"UINTTYPE_Air & UNITTYPE_Fabber"
@@ -143,7 +152,7 @@ namespace PA_JSON_EDITOR
             {
                 DataBaseControler.AddItem(p.name, p.type, complex:p.complex);
             }
-                
+                */
         }
     }
 }

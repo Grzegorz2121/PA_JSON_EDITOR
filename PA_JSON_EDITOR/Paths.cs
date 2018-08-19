@@ -8,6 +8,7 @@ namespace PA_JSON_EDITOR
 {
     public static class Paths
     {
+        //Evey path contains folders relative to the main mod folder
         public static class Mod
         {
             public const string PaFolder = @"\pa";

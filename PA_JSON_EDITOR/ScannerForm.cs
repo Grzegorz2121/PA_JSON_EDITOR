@@ -69,7 +69,12 @@ namespace PA_JSON_EDITOR
 
         public ModStructureManager modStructure;
 
-        public HashContainer hashContainer;
+        public HashContainer hashContainer1;
+        public HashContainer hashContainer2;
+        public HashContainer hashContainer3;
+        public HashContainer hashContainer4;
+
+        public DataContainer dataContainer;
 
         public ScannerForm(Form parent, string path)
         {
@@ -81,7 +86,7 @@ namespace PA_JSON_EDITOR
 
         private void Scan_button_Click(object sender, EventArgs e)
         {
-            
+            /*
             List<string> classes = new List<string>();
             List<string> units = new List<string>();
             List<string> jsons = new List<string>();
@@ -101,12 +106,17 @@ namespace PA_JSON_EDITOR
             foreach(string u in units)
             {
                 var t2 = u.Remove(0, Directory.GetParent(u).FullName.ToString().Length + 1);
-                //List<string> t = Directory.GetFiles(u, t2+"_tool_weapon.json").ToList<string>();
-                List<string> t = Directory.GetFiles(u, "*.json").ToList<string>();
+                List<string> t = Directory.GetFiles(u, t2+"_tool_weapon.json").ToList<string>();
+                //List<string> t = Directory.GetFiles(u, "*.json").ToList<string>();
                 jsons.AddRange(t);
             }
-
-            hashContainer = new HashContainer(jsons.ToArray<string>(), main_path);
+            */
+            hashContainer4 = new HashContainer(main_path, "Unit", "*.json", "*ammo.json|*tool_weapon.json|*build_arm.json");
+            hashContainer1 = new HashContainer(main_path, "Ammo", "*ammo.json", "");
+            hashContainer2 = new HashContainer(main_path, "ToolWeapon", "*tool_weapon.json", "");
+            hashContainer3 = new HashContainer(main_path, "BuildArm", "*build_arm.json", "");
+            
+            //jsons.ToArray<string>(),
             /*
             foreach(string s in jsons)
             {
@@ -125,15 +135,15 @@ namespace PA_JSON_EDITOR
                     featurelist.Add(new Property(p.Name, p.Value.Type.ToString()));
                 }  
             }
-        */
-            foreach(Property p in featurelist)
+        *//*
+            foreach (Property p in featurelist)
             {
                 listBox2.Items.Add(p.name);
 
                 List<string> temp3 = richTextBox2.Lines.ToList<string>();
                 temp3.Add(p.name);
                 richTextBox2.Lines = temp3.ToArray<string>();
-            }
+            }*/
         }
 
         private void Fill_Database()
@@ -143,7 +153,10 @@ namespace PA_JSON_EDITOR
         
         private void Save_Properties_button_Click(object sender, EventArgs e)
         {
-            hashContainer.CreateTheDump(main_path);
+            hashContainer1.CreateTheDump(main_path);
+            hashContainer2.CreateTheDump(main_path);
+            hashContainer3.CreateTheDump(main_path);
+            hashContainer4.CreateTheDump(main_path);
             /*
             DataBaseControler.SetDataBasePath(Application.StartupPath);
             DataBaseControler.CreateDataBase();
@@ -154,5 +167,15 @@ namespace PA_JSON_EDITOR
             }
                 */
         }
+
+        private void Load_Properties_button_Click(object sender, EventArgs e)
+        {
+            openFileDialog1.ShowDialog();
+            var temp = openFileDialog1.FileName;
+            DirectoryInfo di = Directory.GetParent(temp);
+            dataContainer = new DataContainer(temp, di.FullName);
+        }
+
+        
     }
 }

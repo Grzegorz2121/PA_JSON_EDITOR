@@ -63,6 +63,7 @@
     <Compile Include="ICallback.cs" />
     <Compile Include="ModStructureManager.cs" />
     <Compile Include="Paths.cs" />
+    <Compile Include="PaTypes.cs" />
     <Compile Include="Pa_types.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

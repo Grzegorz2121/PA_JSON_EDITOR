@@ -16,299 +16,507 @@ using static Pa_Looker_2.ICallback;
 
 namespace PA_JSON_EDITOR
 {
+
     public class HashContainer
     {
 
+        public enum HashContainerType
+        {
+            Primitive,
+            Complex,
+            Array,
+            Null
+        }
+
         //Universal usage
-        protected bool IsOriginObject;
-        protected JTokenType HashContainerType;
-        protected string name;
+        protected HashContainerType ContainerType;
+        public bool IsMain = false;
+        public int Tier = 0;
+        public string Name = "";
+        public HashSet<string> Parents = new HashSet<string>();
+        public string filename;
 
         //For primitive containers
-        protected List<object> child_primitive_elements = new List<object>();
+        protected int PrimitiveAmount = 0;
+        protected List<object> PrimitiveElements = new List<object>();
+        protected Type PrimitiveType;
 
         //For complex containers
-        protected Dictionary<string, HashContainer> child_elements_complex = new Dictionary<string, HashContainer>();
+        protected int ComplexAmount = 0;
+        protected Dictionary<string, HashContainer> ComplexElements = new Dictionary<string, HashContainer>();
 
         //For arrays
-        protected Dictionary<int, HashContainer> child_elements_array = new Dictionary<int, HashContainer>();
-        protected HashContainer child_template;
-        //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        protected int ArrayAmount = 0;
+        protected Dictionary<int, HashContainer> ArrayElements = new Dictionary<int, HashContainer>();
 
+        protected HashContainer ArraysTemplate;
+
+        protected HashContainer ArrayComplexTemplate;
+
+        protected object ArrayPrimitiveTemplate;
+        protected Type child_primive_type;
+
+        //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        
         /// <summary>
-        /// Constructor when provided with a path to json file will create a tree of containers. 
-        /// That method automaticly creates origin container
+        /// Takes paths to all jsons, relative path and the name of the tree, gives the root of the HashContainerTree
         /// </summary>
         /// <param name="path"></param>
-        public HashContainer(string[] paths, string mainpath)
+        /// 
+        public HashContainer(string path, string treename, string in_searchword, string in_negative_searchword)
         {
-            IsOriginObject = true;
+            
+            Name = "";
 
-            HashContainerType = JTokenType.Object;
+            filename = treename;
 
-            //Iterates throught the jsons
-            foreach (string path in paths)
+            ContainerType = HashContainerType.Complex;
+
+            IsMain = true;
+
+            Parents.Add("");
+
+            GetTheJsons(path, in_searchword, in_negative_searchword);
+        }
+
+        public void GetTheJsons(string path, string searchword, string negative_searchword)
+        {
+            List<string> temp = new List<string>();
+            foreach(string s in negative_searchword.Split('|'))
             {
-                string filename = path.Remove(0, mainpath.Length);
-                using (StreamReader sr = new StreamReader(path))
+                temp.AddRange(Directory.GetFiles(path, s, SearchOption.AllDirectories));
+            }
+            string[] NegativeJsonFiles = temp.ToArray();
+            string[] JsonFiles = Directory.GetFiles(path, searchword, SearchOption.AllDirectories);
+
+            List<JObject> JsonFilesJObjects = new List<JObject>();
+            foreach(string JsonFile in JsonFiles.Except(NegativeJsonFiles))
+            {
+                using (StreamReader sr = new StreamReader(JsonFile))
                 {
-                    JObject json_jobject = JsonConvert.DeserializeObject(sr.ReadToEnd()) as JObject;
 
-                    Update(new KeyValuePair<string, JToken>("", json_jobject));
+                    Update(new KeyValuePair<string, JToken>(Name, JsonConvert.DeserializeObject(sr.ReadToEnd()) as JObject), Name);
+                }
+            }
 
-                    //Iterates every json extracting every 0 level property from each of them then updates root of the tree <--------- BULLSHIT
+            //return JsonFilesJObjects.ToArray<JObject>();
+        }
+        
+        public void UpdateMain(JObject[] FileJsonsJObjects)
+        {  
+            foreach(JObject JsonJObject in FileJsonsJObjects)
+            {
+               // Update(new KeyValuePair<string, JToken>(Name, JsonJObject));
+                //Get all values from json and check if exist on a list if yes pass data to the child if no create new child
+                //foreach (KeyValuePair<string, JToken> Property in JsonJObject)
+               // {
+                    
                     /*
-                    foreach (KeyValuePair<string, JToken> token in json_jobject)
+                    if (ComplexElements.ContainsKey(pair.Key))
                     {
-                        Update(token);
+                        ComplexElements[pair.Key].Update(pair.Value);
+                    }
+                    else
+                    {
+                        ComplexElements.Add(pair.Key, new HashContainer(pair.Value, Tier, pair.Key));
                     }*/
+
+             //  }
+
+            }
+        }
+
+
+        //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
+        /// <summary>
+        /// Constructor used for recursive tree creation
+        /// </summary>
+        /// <param name="input_jobject"></param>
+        /// <param name="Is_orig_obj"></param>
+        public HashContainer(KeyValuePair<string, JToken> InputToken, int ParentTier, string parent)
+        {
+            Name = InputToken.Key;
+
+            Tier = ++ParentTier;
+
+            ContainerType = GetTheTokenType(InputToken.Value);
+
+            Update(InputToken, parent);
+        }
+
+        /*
+        public void Update(JToken Token, HashContainerType Type)
+        {
+            switch(Type)
+            {
+                case HashContainerType.Complex:
+                    UpdateComplex(Token);
+                    break;
+
+                case HashContainerType.Primitive:
+                    UpdatePrimitive(Token);
+                    break;
+
+                case HashContainerType.Array:
+                    UpdateArray(Token);
+                    break;
+            }
+        }
+        */
+        public void Update(KeyValuePair<string, JToken> InputToken, string parent_name)
+        {
+            Parents.Add(parent_name);
+            if(GetTheTokenType(InputToken.Value)!=ContainerType)
+            {
+                return;
+            }
+           // switch (ContainerType)
+           switch(GetTheTokenType(InputToken.Value))
+           {
+                case HashContainerType.Array:
+                    UpdateArray(InputToken);
+                    break;
+
+                case HashContainerType.Complex:
+                    UpdateComplex(InputToken);
+                    break;
+
+                case HashContainerType.Primitive:
+                    UpdatePrimitive(InputToken);
+                    break;
+           }
+
+        }
+
+        public void UpdateComplex(KeyValuePair<string, JToken> InputToken)
+        {
+
+            //TODO: Fix cases where a token can contain different types
+            /*if (GetTheTokenType(InputToken.Value, this) != ContainerType)
+            {
+                return;
+            }*/
+
+            //If the Token is complex it has to be a JObject with dictonary of next tokens
+            foreach(KeyValuePair<string, JToken> Pair in (JObject)InputToken.Value)
+            {
+                PrimitiveAmount++;
+                //Creates a new token if token wasnt found on the list already, updates the token when it exists
+                if(ComplexElements.ContainsKey(Pair.Key))
+                {
+                    ComplexElements[Pair.Key].Update(Pair, Name);
+                }
+                else
+                {
+                    ComplexElements.Add(Pair.Key, new HashContainer(Pair, Tier, Name));
                 }
             }
         }
 
-
-        //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-        /// <summary>
-        /// Constructor when provided with raw jobject will create a tree that allows easy data managment.
-        /// Constructor is only called once, after that the whole tree will be created recusivly
-        /// </summary>
-        /// <param name="input_jobject"></param>
-        /// <param name="Is_orig_obj"></param>
-        public HashContainer(KeyValuePair<string, JToken> named_token)
+        public void UpdateArray(KeyValuePair<string, JToken> InputToken)
         {
-            IsOriginObject = false;
 
-            name = named_token.Key;
 
-            HashContainerType = named_token.Value.Type;
+            //Array will create template and redirect all data from other array members to it.
+            if (ArraysTemplate != null)
+            {
+                foreach (JToken ArraysToken in (JArray)InputToken.Value)
+                {
+                    ArrayAmount++;
+                    ArraysTemplate.Update(new KeyValuePair<string, JToken>(Name+@"_Template", ArraysToken), Name);
+                }
+            }
+            else
+            {
+                ArraysTemplate = new HashContainer(new KeyValuePair<string, JToken>(Name+@"_Template", InputToken.Value.First), --Tier, Name);
+            }
 
-            Update(named_token); 
         }
 
-        public void Update(KeyValuePair<string, JToken> named_token)
+        public void UpdatePrimitive(KeyValuePair<string, JToken> InputToken)
         {
 
-            JTokenType ContainerType = named_token.Value.Type;
+            PrimitiveType = InputToken.Value.ToObject<object>().GetType();
+            PrimitiveAmount++;
+
+            if (Name == "ammo_id")
+            {
+                Console.WriteLine();
+                if (PrimitiveType != typeof(String))
+                {
+                    Console.WriteLine();
+                }
+            }
+
+            if (PrimitiveElements.Contains(InputToken.Value.Value<object>()))
+            {
+                
+            }
+            else
+            {
+                PrimitiveElements.Add(InputToken.Value.Value<object>() );
+            }
+        }
+
+       public HashContainerType GetTheTokenType(JToken token)
+       {
+            if (token == null)
+            {
+                return HashContainerType.Null;
+            }
+
+            switch(token.Type)
+            {
+                case JTokenType.Array:
+                    return HashContainerType.Array;
+
+                case JTokenType.Object:
+                    return HashContainerType.Complex;
+
+                case JTokenType.Null:
+                    return HashContainerType.Null;
+
+                default:
+                    return HashContainerType.Primitive;
+            }
+       }
+
+        public class Content
+        {
+            public string Type;
+            public string PrimitiveType;
+            public string ArrayTemplate;
+            public string[] ComplexChildren;
+            public int Tier;
+            public string[] Parent;
+
+            public Content(HashContainerType in_type, object in_elements, int in_tier, HashSet<string> parents)
+            {
+                Type = in_type.ToString();
+                switch(in_type)
+                {
+                    case HashContainerType.Array:
+                        ArrayTemplate = (string)in_elements;
+                        break;
+                    case HashContainerType.Primitive:
+                        PrimitiveType = (string)in_elements;
+                        break;
+                    case HashContainerType.Complex:
+                        var temp = in_elements as List<string>;
+                        ComplexChildren = temp.ToArray();
+                        break;
+                }
+                Parent = parents.ToArray();
+                Tier = in_tier;
+            }
+        }
+
+        public void GetTheData(Dictionary<string, Content> ListOfProperties)
+        {
+            Content ContainerHashedInfo;
 
             switch (ContainerType)
             {
-                case JTokenType.Array:
-                    bool first_time = true;
-                    foreach(JToken token in named_token.Value)
+                case HashContainerType.Complex:
+                    List<string> Temp = new List<string>();
+                    foreach(string ChildrenName in ComplexElements.Keys)
                     {
-
-                        if(first_time)
-                        {
-                            child_template = new HashContainer(new KeyValuePair<string, JToken>("TEMPLATE", token));
-                            first_time = false;
-                        }
-                        else
-                        {
-                            child_template.Update(new KeyValuePair<string, JToken>("TEMPLATE", token));
-                        }
-                        /*
-                        if (child_elements_array.ContainsKey(i))
-                        {
-                            child_elements_array[i].Update(new KeyValuePair<string, JToken>(i.ToString(), token));
-                        }
-                        else
-                        {
-                            child_elements_array.Add(i, new HashContainer(new KeyValuePair<string, JToken>(i.ToString(), token)));
-                        }
-                        
-                        i++;*/
+                        Temp.Add(ChildrenName);
                     }
-
+                    ContainerHashedInfo = new Content(ContainerType, Temp, Tier, Parents);
+                    //Content = Temp;
                     break;
 
-                case JTokenType.Object:
+                case HashContainerType.Primitive:
+                    //Content = PrimitiveType.ToString();
+                    ContainerHashedInfo = new Content(ContainerType, PrimitiveType.ToString(), Tier, Parents);
+                    break;
 
-                    foreach (KeyValuePair<string, JToken> children_token in (JObject)named_token.Value)
-                    {
-                        if(child_elements_complex.ContainsKey(children_token.Key))
-                        {
-                            child_elements_complex[children_token.Key].Update(children_token);
-                        }
-                        else
-                        {
-                            child_elements_complex.Add(children_token.Key, new HashContainer(children_token));
-                        }
-                        
-                    }
-
+                case HashContainerType.Array:
+                    //Content = ArraysTemplate.Name;
+                    ContainerHashedInfo = new Content(ContainerType, ArraysTemplate.Name, Tier, Parents);
                     break;
 
                 default:
-
-                    if(!child_primitive_elements.Contains(named_token.Value.ToObject(typeof(String))))
-                    {
-                        child_primitive_elements.Add(named_token.Value.ToObject(typeof(String)));
-                    }
-                    
-
+                    //Content = "ERROR";
+                    ContainerHashedInfo = new Content(ContainerType, "ERROR", Tier, Parents);
                     break;
             }
-            
-            
-        }
 
-        public JToken GetTheData()
-        {
-            switch(HashContainerType)
+            //Sometimes few tokens can contain the same children with the same type, that check prevents putting them twice in a dictonary
+            if(!ListOfProperties.ContainsKey(Name))
             {
-                case JTokenType.Array:
-                    
-                   // Dictionary<string, JToken> children_names_and_valuesa = new Dictionary<string, JToken>();
-                   /*
-                    foreach (KeyValuePair<int, HashContainer> child_container in child_elements_array)
-                    {
-                        children_names_and_valuesa.Add(child_container.Key.ToString(), child_container.Value.GetTheData());
-                    }
-
-                    JObject return_jobjecta = new JObject(children_names_and_valuesa);*/
-                   // children_names_and_valuesa.Add("TEMPLATE", child_template.GetTheData());
-                   // List<JToken> Jtokenlist = new List<JToken>();
-                   // Jtokenlist.Add(child_template.GetTheData());
-                   // JObject return_jobjecta = new JObject();
-                    return JToken.FromObject(child_template.GetTheData());
-                   // return return_jobjecta as JToken;
-
-                    break;
-
-                case JTokenType.Object:
-
-                    Dictionary<string, JToken> children_names_and_values = new Dictionary<string, JToken>();
-                    foreach (KeyValuePair<string, HashContainer> child_container in child_elements_complex)
-                    {
-                        children_names_and_values.Add(child_container.Key, child_container.Value.GetTheData());
-                    }
-                    return JToken.FromObject(children_names_and_values);
-                    //JObject return_jobject = new JObject(children_names_and_values);
-                   // return return_jobject as JToken;
-
-                    break;
-
-                default:
-
-                    return JToken.FromObject(child_primitive_elements);
-                    
-
-                break;
+                ListOfProperties.Add(Name, ContainerHashedInfo);
             }
-               
+
+
+            switch (ContainerType)
+            {
+                case HashContainerType.Complex:
+                    foreach(HashContainer Children in ComplexElements.Values)
+                    {
+                        Children.GetTheData(ListOfProperties);
+                    }
+                    break;
+
+                case HashContainerType.Primitive:
+
+                    break;
+
+                case HashContainerType.Array:
+                    ArraysTemplate.GetTheData(ListOfProperties);
+                    break;
+            }
+            /*
+            Dictionary<string, object> content = new Dictionary<string, object>();
+
+            switch (ContainerType)
+            {
+                case HashContainerType.Complex:
+                    content.Add("Name", Name);
+                    content.Add("Tier", Tier);
+                    content.Add("Type", ContainerType.ToString());
+                    content.Add("Children", ComplexElements.Keys);
+                    using (StreamWriter file = File.CreateText(path + @"\dump" + Tier + @".json"))
+                    {
+                        JsonSerializer js = new JsonSerializer();
+                        js.Serialize(file, content);
+                    }
+
+                    foreach (HashContainer Children in ComplexElements.Values)
+                    {
+                        Children.CreateTheDump(path);
+                    }
+                    break;
+
+                case HashContainerType.Primitive:
+                    content.Add("Name", Name);
+                    content.Add("Tier", Tier);
+                    content.Add("Type", ContainerType.ToString());
+                    content.Add("Values", PrimitiveElements);
+                    using (StreamWriter file = File.CreateText(path + @"dump" + Tier + Name + @".json"))
+                    {
+                        JsonSerializer js = new JsonSerializer();
+                        js.Serialize(file, content);
+                    }
+                    break;
+
+                case HashContainerType.Array:
+                    content.Add("Name", Name);
+                    content.Add("Tier", Tier);
+                    content.Add("Type", ContainerType.ToString());
+                    content.Add("Template", ArraysTemplate.Name);
+                    using (StreamWriter file = File.CreateText(path + @"\dump" + Tier + Name + @".json"))
+                    {
+                        JsonSerializer js = new JsonSerializer();
+                        js.Serialize(file, content);
+                    }
+
+                    ArraysTemplate.CreateTheDump(path);
+                    break;
+            }*/
         }
+
+
 
         public void CreateTheDump(string path)
         {
-            using (StreamWriter file = File.CreateText(path+@"\dump.json"))
+
+            Dictionary<string, Content> ListOfProperties = new Dictionary<string, Content>();
+
+            foreach (HashContainer Children in ComplexElements.Values)
             {
-                JsonSerializer js = new JsonSerializer();
-                js.Serialize(file, GetTheData());
+                Children.GetTheData(ListOfProperties);
             }
+
+            JObject job = JObject.FromObject(ListOfProperties);
+
+            using (StreamWriter file = File.CreateText(path + filename + @"PropertiesList.json"))
+            {
+                file.Write(JsonConvert.SerializeObject(job, Formatting.Indented));
+            }
+            
+            /*
+            using (JsonTextWriter writer = new JsonTextWriter(file))
+            {
+                job.WriteTo(writer);
+            }*/
+
+
         }
         //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        
+
     }
 }
-
-
-
-
-
-
-
-
-
-
+/*
+string json = JsonConvert.SerializeObject(account, Formatting.Indented);
+// {
+//   "Email": "james@example.com",
+//   "Active": true,
+//   "CreatedDate": "2013-01-20T00:00:00Z",
+//   "Roles": [
+//     "User",
+//     "Admin"
+//   ]
+// }*/
 
 
 
 
 
 /*
-        public void CreateTheDump(string path)
+ *         public void CreateTheDump(string path)
+    {
+        Dictionary<string, object> content = new Dictionary<string, object>();
+
+        switch (ContainerType)
         {
-            JObject ob = new JObject();
-            foreach(KeyValuePair<string, HashContainer> hc in child_elements)
-            {
-               ob.Add(hc.Key, hc.Value.GetTheData());
-            }
-            using (StreamWriter sw = new StreamWriter(path + "\\dump.json"))
-            {
-                JsonSerializer js = new JsonSerializer();
-                js.Serialize(sw, ob);
-            }
+            case HashContainerType.Complex:
+                content.Add("Name", Name);
+                content.Add("Tier", Tier);
+                content.Add("Type", ContainerType.ToString());
+                content.Add("Children", ComplexElements.Keys);
+                using (StreamWriter file = File.CreateText(path + @"\dump" + Tier + @".json"))
+                {
+                    JsonSerializer js = new JsonSerializer();
+                    js.Serialize(file, content);
+                }
+
+                foreach(HashContainer Children in ComplexElements.Values)
+                {
+                    Children.CreateTheDump(path);
+                }
+                break;
+
+            case HashContainerType.Primitive:
+                content.Add("Name", Name);
+                content.Add("Tier", Tier);
+                content.Add("Type", ContainerType.ToString());
+                content.Add("Values", PrimitiveElements);
+                using (StreamWriter file = File.CreateText(path + @"dump" + Tier + Name + @".json"))
+                {
+                    JsonSerializer js = new JsonSerializer();
+                    js.Serialize(file, content);
+                }
+                break;
+
+            case HashContainerType.Array:
+                content.Add("Name", Name);
+                content.Add("Tier", Tier);
+                content.Add("Type", ContainerType.ToString());
+                content.Add("Template", ArraysTemplate.Name);
+                using (StreamWriter file = File.CreateText(path + @"\dump" + Tier + Name + @".json"))
+                {
+                    JsonSerializer js = new JsonSerializer();
+                    js.Serialize(file, content);
+                }
+
+                ArraysTemplate.CreateTheDump(path);
+                break;
         }
-        
-        public JToken GetTheData()
-        {
-            if(ContainerType == HashContainerType.complex)
-            {
-                JObject ob = new JObject();
-                foreach (KeyValuePair<string, HashContainer> hc in child_elements)
-                {
-                    ob.Add(hc.Key, hc.Value.GetTheData());
-                }
-                return ob as JToken;
-            }
-            else
-            {
-               return JToken.FromObject(PrimitiveContents);
-            }
-        }
 
-        public void Update(JToken jobject, string filename)
-        {
 
-            //Check for complex vs primitive
-            if (jobject.HasValues)
-            {
-                ContainerType = HashContainerType.complex;
-                //Populate children list with next level/tier tokens
-                //Every token will execute the same procedure eventualy creating a tree
-                //The main container is the origin of the tree, primitive containers are the end of the branches
-
-                JObject job = jobject as JObject;
-
-                foreach (KeyValuePair<string, JToken> pair in job)
-                {
-                    if (!child_elements.ContainsKey(pair.Key))
-                    {
-                        if (pair.Value.Type != JTokenType.Array)
-                        {
-                            child_elements.Add(pair.Key, new HashContainer(pair.Value, pair.Key, filename, GetContainerType(pair.Value) ,false));
-                        }
-                    }
-                    else
-                    {
-                        if (pair.Value.Type != JTokenType.Array)
-                        {
-                            child_elements[pair.Key].Update(pair.Value, filename);
-                        }
-                    }
-
-                }
-
-            }
-            else
-            {
-                ContainerType = HashContainerType.primitive;
-                //If token is primitive we can extract value from it
-                PrimitiveContents.Add(jobject.ToObject<object>());
-            }
-        }   
-
-        public void Dispose()
-        {
-            if (ContainerType == HashContainerType.complex)
-            {
-                foreach (HashContainer c in child_elements.Values)
-                {
-                    c.Dispose();
-
-                }
-                child_elements = null;
-            }
-
-        }*/
+    }
+     */

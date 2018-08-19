@@ -25,11 +25,11 @@ namespace PA_JSON_EDITOR
             unit_folder_path = path;
             foreach (string file in Directory.GetFiles(unit_folder_path))
             {
-                if (file.Remove(0, unit_folder_path.Length) == Directory.GetParent(unit_folder_path).Name)
+               /* if (file.Remove(0, unit_folder_path.Length) == Directory.GetParent(unit_folder_path).Name)
                 {
                     unit_main_json = new DataContainer(file);
                     unit_main_json_path = file;
-                }
+                }*/
             }
         }
     }

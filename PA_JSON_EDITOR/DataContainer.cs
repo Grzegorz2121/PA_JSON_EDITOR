@@ -6,12 +6,13 @@ using System.Threading.Tasks;
 using System.Drawing;
 using System.Windows.Forms;
 using System.IO;
-//using static Pa_Looker_2.Folder_tools;
 using Newtonsoft.Json.Converters;
 using Newtonsoft.Json.Serialization;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using Newtonsoft;
+using static PA_JSON_EDITOR.GraphicalContainer;
+using static PA_JSON_EDITOR.GraphicalContainerSizes;
 
 namespace PA_JSON_EDITOR
 {
@@ -28,23 +29,29 @@ namespace PA_JSON_EDITOR
         }
 
         //Universal usage
-        protected DataContainerType ContainerType;
-        public bool IsMain = false;
-        public int Tier = 0;
-        public string Name = "";
-        public string filename;
+        GraphicalContainer graphicalContainer;
+        public Form Parent;
+        public Point Location;
+
+        public DataContainerType ContainerType
+        { get; private set; }
+
+        public bool IsMain { get; private set; } = false;
+        public int Tier { get; private set; } = 0;
+        public string Name { get; private set; } = "";
+        public string filename { get; private set; }
 
         //For primitive containers
-        protected object PrimitiveElement = new object();
+        public object PrimitiveElement = new object();
         protected Type PrimitiveType;
 
         //For complex containers
-        protected int ComplexAmount = 0;
-        protected Dictionary<string, DataContainer> ComplexElements = new Dictionary<string, DataContainer>();
+        public int ComplexAmount = 0;
+        public Dictionary<string, DataContainer> ComplexElements = new Dictionary<string, DataContainer>();
 
         //For arrays
-        protected int ArrayAmount = 0;
-        protected Dictionary<int, DataContainer> ArrayElements = new Dictionary<int, DataContainer>();
+        public int ArrayAmount = 0;
+        public Dictionary<int, DataContainer> ArrayElements = new Dictionary<int, DataContainer>();
 
         protected DataContainer ArraysTemplate;
 
@@ -53,26 +60,32 @@ namespace PA_JSON_EDITOR
         /// <summary>
         /// Creates new DataContainer class used for json loading, editing, saving, modyfying
         /// </summary>
-        public DataContainer()
+        public DataContainer(Form InParent)
         {
             Name = "";
 
             ContainerType = DataContainerType.Complex;
 
             IsMain = true;
+
+            Parent = InParent;
         }
 
         /// <summary>
         /// Read
         /// </summary>
         /// <param name="path"></param>
-        public DataContainer(string path)
+        public DataContainer(string path, Form InParent)
         {
+            //Location = new Point(30, 30);
+
             Name = "";
 
             ContainerType = DataContainerType.Complex;
 
             IsMain = true;
+
+            Parent = InParent;
 
             ReadTheJson(path);
         }
@@ -96,13 +109,17 @@ namespace PA_JSON_EDITOR
         /// </summary>
         /// <param name="input_jobject"></param>
         /// <param name="Is_orig_obj"></param>
-        public DataContainer(KeyValuePair<string, JToken> InputToken, int ParentTier, string parent)
+        public DataContainer(KeyValuePair<string, JToken> InputToken, int ParentTier, string parent, Form InParent, Point location)
         {
             Name = InputToken.Key;
 
             Tier = ++ParentTier;
 
             ContainerType = GetTheTokenType(InputToken.Value);
+
+            Parent = InParent;
+
+            Location = location + (Size)UniversalSize.Marigin + (Size)UniversalSize.Size;
 
             Update(InputToken, parent);
         }
@@ -113,20 +130,28 @@ namespace PA_JSON_EDITOR
            {
                 case DataContainerType.Array:
                     UpdateArray(InputToken);
+
+                    graphicalContainer = new GraphicalContainer(Parent, this);
                     break;
 
                 case DataContainerType.Complex:
                     UpdateComplex(InputToken);
+
+                    graphicalContainer = new GraphicalContainer(Parent, this);
                     break;
 
                 case DataContainerType.Primitive:
                     UpdatePrimitive(InputToken);
+
+                    graphicalContainer = new GraphicalContainer(Parent, this);
                     break;
            }
         }
 
+
         public void UpdateComplex(KeyValuePair<string, JToken> InputToken)
         {
+            Location = new Point(Location.X, Location.Y + UniversalSize.Marigin.Y + UniversalSize.Size.Y);
             //If the Token is complex it has to be a JObject with dictonary of next tokens
             foreach(KeyValuePair<string, JToken> Pair in (JObject)InputToken.Value)
             {
@@ -137,19 +162,21 @@ namespace PA_JSON_EDITOR
                 }
                 else
                 {
-                    ComplexElements.Add(Pair.Key, new DataContainer(Pair, Tier, Name));
+                    ComplexElements.Add(Pair.Key, new DataContainer(Pair, Tier, Name, Parent, Location));
                 }
+                Location = new Point(Location.X + UniversalSize.Marigin.X + UniversalSize.Size.X, Location.Y);
             }
         }
 
         public void UpdateArray(KeyValuePair<string, JToken> InputToken)
         {
             //Array will create template and redirect all data from other array members to it.
-            
+            Location = new Point(Location.X, Location.Y + UniversalSize.Marigin.Y + UniversalSize.Size.Y);
             foreach (JToken ArraysToken in (JArray)InputToken.Value)
             {
-                ArrayElements.Add(ArrayAmount, new DataContainer(new KeyValuePair<string, JToken>(ArrayAmount.ToString(), ArraysToken), Tier, Name));
+                ArrayElements.Add(ArrayAmount, new DataContainer(new KeyValuePair<string, JToken>(ArrayAmount.ToString(), ArraysToken), Tier, Name, Parent, Location));
                 ArrayAmount++;
+                Location = new Point(Location.X + UniversalSize.Marigin.X + UniversalSize.Size.X, Location.Y);
             }
         }
 
@@ -227,25 +254,7 @@ namespace PA_JSON_EDITOR
 
                     break;
             }
-            /*
-            switch (ContainerType)
-            {
-                case DataContainerType.Complex:
-                    foreach (DataContainer Children in ComplexElements.Values)
-                    {
-                        Children.GetTheData();
-                    }
-                    break;
-
-                case DataContainerType.Primitive:
-
-                    break;
-
-                case DataContainerType.Array:
-                    ArraysTemplate.GetTheData();
-                    break;
-            }*/
-
+            
         }
 
         public void SaveTheJson(string path)

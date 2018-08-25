@@ -9,173 +9,38 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using PA_JSON_EDITOR;
 using System.IO;
-using static Pa_Looker_2.Folder_tools;
-
 using Newtonsoft.Json.Converters;
 using Newtonsoft.Json.Serialization;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using Newtonsoft;
 
-using static PA_JSON_EDITOR.ModStructureManager;
-using static PA_JSON_EDITOR.DataBaseControler;
-
 namespace PA_JSON_EDITOR
 {
     public partial class ScannerForm : Form
     {
-        public class Property
+        public HashContainer[] hashContainer = new HashContainer[4];
+
+        public ScannerForm()
         {
-            public Property(string input_name, string input_type)
-            {
-                name = input_name;
-                type = input_type;
-                if ((type == "Object") || (type == "Array"))
-                {
-                    complex = "true";
-                }
-                else
-                {
-                    complex = "false";
-                }
-            }
-            public override int GetHashCode()
-            {
-                return name.GetHashCode();
-            }
-
-            public override bool Equals(object obj)
-            {
-                Property temp = obj as Property;
-                if(temp.name==this.name)
-                {
-                    return true;
-                }
-                else
-                {
-                    return false;
-                }
-            }
-            public string complex;
-            public string name;
-            public string type;
-        } 
-
-
-        public static Form main_form;
-        protected static string main_path;
-
-        public static HashSet<Property> featurelist = new HashSet<Property>();
-
-        public ModStructureManager modStructure;
-
-        public HashContainer hashContainer1;
-        public HashContainer hashContainer2;
-        public HashContainer hashContainer3;
-        public HashContainer hashContainer4;
-
-        public DataContainer dataContainer;
-
-        public ScannerForm(Form parent, string path)
-        {
-            main_form = parent;
-            main_path = path;
             InitializeComponent();
-           // modStructure = new ModStructureManager(main_path);
         }
 
         private void Scan_button_Click(object sender, EventArgs e)
         {
-            /*
-            List<string> classes = new List<string>();
-            List<string> units = new List<string>();
-            List<string> jsons = new List<string>();
-            
-            List<string> temp = Directory.GetDirectories(main_path, "units", SearchOption.AllDirectories).ToList<string>();
-
-            foreach (string u in temp)
-            {
-                classes.AddRange(Directory.GetDirectories(u).ToList<string>());
-            }
-
-            foreach(string c in classes)
-            {
-                units.AddRange(Directory.GetDirectories(c));
-            }
-
-            foreach(string u in units)
-            {
-                var t2 = u.Remove(0, Directory.GetParent(u).FullName.ToString().Length + 1);
-                List<string> t = Directory.GetFiles(u, t2+"_tool_weapon.json").ToList<string>();
-                //List<string> t = Directory.GetFiles(u, "*.json").ToList<string>();
-                jsons.AddRange(t);
-            }
-            */
-            hashContainer4 = new HashContainer(main_path, "Unit", "*.json", "*ammo.json|*tool_weapon.json|*build_arm.json");
-            hashContainer1 = new HashContainer(main_path, "Ammo", "*ammo.json", "");
-            hashContainer2 = new HashContainer(main_path, "ToolWeapon", "*tool_weapon.json", "");
-            hashContainer3 = new HashContainer(main_path, "BuildArm", "*build_arm.json", "");
-            
-            //jsons.ToArray<string>(),
-            /*
-            foreach(string s in jsons)
-            {
-                listBox1.Items.Add(Shorten_path(main_path,s));
-
-                List<string> temp3 = richTextBox1.Lines.ToList<string>();
-                temp3.Add(s);
-                richTextBox1.Lines = temp3.ToArray<string>();
-
-                
-                StreamReader sr = new StreamReader(s);
-
-                JToken jobject = JsonConvert.DeserializeObject(sr.ReadToEnd()) as JToken;
-                foreach(JProperty p in jobject)
-                {
-                    featurelist.Add(new Property(p.Name, p.Value.Type.ToString()));
-                }  
-            }
-        *//*
-            foreach (Property p in featurelist)
-            {
-                listBox2.Items.Add(p.name);
-
-                List<string> temp3 = richTextBox2.Lines.ToList<string>();
-                temp3.Add(p.name);
-                richTextBox2.Lines = temp3.ToArray<string>();
-            }*/
+            hashContainer[0] = new HashContainer("", "Unit", "*.json", "*ammo.json|*tool_weapon.json|*build_arm.json");
+            hashContainer[1] = new HashContainer("", "Ammo", "*ammo.json", "");
+            hashContainer[2] = new HashContainer("", "ToolWeapon", "*tool_weapon.json", "");
+            hashContainer[3] = new HashContainer("", "BuildArm", "*build_arm.json", "");
         }
-
-        private void Fill_Database()
-        {
-            
-        }   
         
         private void Save_Properties_button_Click(object sender, EventArgs e)
         {
-            hashContainer1.CreateTheDump(main_path);
-            hashContainer2.CreateTheDump(main_path);
-            hashContainer3.CreateTheDump(main_path);
-            hashContainer4.CreateTheDump(main_path);
-            /*
-            DataBaseControler.SetDataBasePath(Application.StartupPath);
-            DataBaseControler.CreateDataBase();
-            // "name":"health_fraction", "type":"float", "description":"The amount of health remaining after being converted to wreckage.", "parent":"wreckage", "advanced":false, "context":"UINTTYPE_Air & UNITTYPE_Fabber"
-            foreach (Property p in featurelist)
+            foreach(HashContainer container in hashContainer)
             {
-                DataBaseControler.AddItem(p.name, p.type, complex:p.complex);
+                container.CreateTheDump("");
             }
-                */
         }
 
-        private void Load_Properties_button_Click(object sender, EventArgs e)
-        {
-            openFileDialog1.ShowDialog();
-            var temp = openFileDialog1.FileName;
-            DirectoryInfo di = Directory.GetParent(temp);
-            dataContainer = new DataContainer(temp, di.FullName);
-        }
-
-        
     }
 }

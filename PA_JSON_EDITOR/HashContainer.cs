@@ -6,13 +6,11 @@ using System.Threading.Tasks;
 using System.Drawing;
 using System.Windows.Forms;
 using System.IO;
-using static Pa_Looker_2.Folder_tools;
 using Newtonsoft.Json.Converters;
 using Newtonsoft.Json.Serialization;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using Newtonsoft;
-using static Pa_Looker_2.ICallback;
 
 namespace PA_JSON_EDITOR
 {
@@ -76,10 +74,10 @@ namespace PA_JSON_EDITOR
 
             Parents.Add("");
 
-            GetTheJsons(path, in_searchword, in_negative_searchword);
+            UpdateMain(path, in_searchword, in_negative_searchword);
         }
 
-        public void GetTheJsons(string path, string searchword, string negative_searchword)
+        public void UpdateMain(string path, string searchword, string negative_searchword)
         {
             List<string> temp = new List<string>();
             foreach(string s in negative_searchword.Split('|'))
@@ -102,30 +100,6 @@ namespace PA_JSON_EDITOR
             //return JsonFilesJObjects.ToArray<JObject>();
         }
         
-        public void UpdateMain(JObject[] FileJsonsJObjects)
-        {  
-            foreach(JObject JsonJObject in FileJsonsJObjects)
-            {
-               // Update(new KeyValuePair<string, JToken>(Name, JsonJObject));
-                //Get all values from json and check if exist on a list if yes pass data to the child if no create new child
-                //foreach (KeyValuePair<string, JToken> Property in JsonJObject)
-               // {
-                    
-                    /*
-                    if (ComplexElements.ContainsKey(pair.Key))
-                    {
-                        ComplexElements[pair.Key].Update(pair.Value);
-                    }
-                    else
-                    {
-                        ComplexElements.Add(pair.Key, new HashContainer(pair.Value, Tier, pair.Key));
-                    }*/
-
-             //  }
-
-            }
-        }
-
 
         //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -146,25 +120,6 @@ namespace PA_JSON_EDITOR
             Update(InputToken, parent);
         }
 
-        /*
-        public void Update(JToken Token, HashContainerType Type)
-        {
-            switch(Type)
-            {
-                case HashContainerType.Complex:
-                    UpdateComplex(Token);
-                    break;
-
-                case HashContainerType.Primitive:
-                    UpdatePrimitive(Token);
-                    break;
-
-                case HashContainerType.Array:
-                    UpdateArray(Token);
-                    break;
-            }
-        }
-        */
         public void Update(KeyValuePair<string, JToken> InputToken, string parent_name)
         {
             Parents.Add(parent_name);
@@ -218,7 +173,6 @@ namespace PA_JSON_EDITOR
         public void UpdateArray(KeyValuePair<string, JToken> InputToken)
         {
 
-
             //Array will create template and redirect all data from other array members to it.
             if (ArraysTemplate != null)
             {
@@ -250,13 +204,9 @@ namespace PA_JSON_EDITOR
                 }
             }
 
-            if (PrimitiveElements.Contains(InputToken.Value.Value<object>()))
+            if (!PrimitiveElements.Contains(InputToken.Value.Value<object>()))
             {
-                
-            }
-            else
-            {
-                PrimitiveElements.Add(InputToken.Value.Value<object>() );
+                PrimitiveElements.Add(InputToken.Value.Value<object>());
             }
         }
 
@@ -326,21 +276,17 @@ namespace PA_JSON_EDITOR
                         Temp.Add(ChildrenName);
                     }
                     ContainerHashedInfo = new Content(ContainerType, Temp, Tier, Parents);
-                    //Content = Temp;
                     break;
 
                 case HashContainerType.Primitive:
-                    //Content = PrimitiveType.ToString();
                     ContainerHashedInfo = new Content(ContainerType, PrimitiveType.ToString(), Tier, Parents);
                     break;
 
                 case HashContainerType.Array:
-                    //Content = ArraysTemplate.Name;
                     ContainerHashedInfo = new Content(ContainerType, ArraysTemplate.Name, Tier, Parents);
                     break;
 
                 default:
-                    //Content = "ERROR";
                     ContainerHashedInfo = new Content(ContainerType, "ERROR", Tier, Parents);
                     break;
             }
@@ -369,57 +315,8 @@ namespace PA_JSON_EDITOR
                     ArraysTemplate.GetTheData(ListOfProperties);
                     break;
             }
-            /*
-            Dictionary<string, object> content = new Dictionary<string, object>();
-
-            switch (ContainerType)
-            {
-                case HashContainerType.Complex:
-                    content.Add("Name", Name);
-                    content.Add("Tier", Tier);
-                    content.Add("Type", ContainerType.ToString());
-                    content.Add("Children", ComplexElements.Keys);
-                    using (StreamWriter file = File.CreateText(path + @"\dump" + Tier + @".json"))
-                    {
-                        JsonSerializer js = new JsonSerializer();
-                        js.Serialize(file, content);
-                    }
-
-                    foreach (HashContainer Children in ComplexElements.Values)
-                    {
-                        Children.CreateTheDump(path);
-                    }
-                    break;
-
-                case HashContainerType.Primitive:
-                    content.Add("Name", Name);
-                    content.Add("Tier", Tier);
-                    content.Add("Type", ContainerType.ToString());
-                    content.Add("Values", PrimitiveElements);
-                    using (StreamWriter file = File.CreateText(path + @"dump" + Tier + Name + @".json"))
-                    {
-                        JsonSerializer js = new JsonSerializer();
-                        js.Serialize(file, content);
-                    }
-                    break;
-
-                case HashContainerType.Array:
-                    content.Add("Name", Name);
-                    content.Add("Tier", Tier);
-                    content.Add("Type", ContainerType.ToString());
-                    content.Add("Template", ArraysTemplate.Name);
-                    using (StreamWriter file = File.CreateText(path + @"\dump" + Tier + Name + @".json"))
-                    {
-                        JsonSerializer js = new JsonSerializer();
-                        js.Serialize(file, content);
-                    }
-
-                    ArraysTemplate.CreateTheDump(path);
-                    break;
-            }*/
+            
         }
-
-
 
         public void CreateTheDump(string path)
         {
@@ -437,19 +334,13 @@ namespace PA_JSON_EDITOR
             {
                 file.Write(JsonConvert.SerializeObject(job, Formatting.Indented));
             }
-            
-            /*
-            using (JsonTextWriter writer = new JsonTextWriter(file))
-            {
-                job.WriteTo(writer);
-            }*/
-
 
         }
         //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
     }
 }
+
 /*
 string json = JsonConvert.SerializeObject(account, Formatting.Indented);
 // {

@@ -48,23 +48,20 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Container.cs" />
-    <Compile Include="DataBaseControler.cs" />
-    <Compile Include="HashContainer.cs" />
     <Compile Include="DataContainer.cs" />
-    <Compile Include="Folder_tools.cs" />
+    <Compile Include="JsonEditorForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="JsonEditorForm.Designer.cs">
+      <DependentUpon>JsonEditorForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="HashContainer.cs" />
     <Compile Include="MainForm.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="MainForm.Designer.cs">
       <DependentUpon>MainForm.cs</DependentUpon>
     </Compile>
-    <Compile Include="GUI_controler.cs" />
-    <Compile Include="ICallback.cs" />
-    <Compile Include="ModStructureManager.cs" />
-    <Compile Include="Paths.cs" />
-    <Compile Include="PaTypes.cs" />
-    <Compile Include="Pa_types.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ScannerForm.cs">
@@ -73,6 +70,9 @@
     <Compile Include="ScannerForm.Designer.cs">
       <DependentUpon>ScannerForm.cs</DependentUpon>
     </Compile>
+    <EmbeddedResource Include="JsonEditorForm.resx">
+      <DependentUpon>JsonEditorForm.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="MainForm.resx">
       <DependentUpon>MainForm.cs</DependentUpon>
     </EmbeddedResource>

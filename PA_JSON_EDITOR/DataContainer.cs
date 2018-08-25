@@ -6,219 +6,263 @@ using System.Threading.Tasks;
 using System.Drawing;
 using System.Windows.Forms;
 using System.IO;
-using static Pa_Looker_2.Folder_tools;
+//using static Pa_Looker_2.Folder_tools;
 using Newtonsoft.Json.Converters;
 using Newtonsoft.Json.Serialization;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using Newtonsoft;
-using static Pa_Looker_2.ICallback;
 
 namespace PA_JSON_EDITOR
 {
+
     public class DataContainer
     {
-        //Universal usage
-        protected JTokenType DataContainerType;
 
-        //For primitive containers
-        protected object child_primitive_element = new object();
-
-        //For complex containers
-        protected Dictionary<string, DataContainer> child_elements_complex = new Dictionary<string, DataContainer>();
-
-        //For arrays
-        protected Dictionary<int, DataContainer> child_elements_array = new Dictionary<int, DataContainer>();
-        protected DataContainer child_template;
-        //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-        /// <summary>
-        /// Constructor when provided with a path to json file will create a tree of containers. 
-        /// That method automaticly creates origin container
-        /// </summary>
-        /// <param name="path"></param>
-        public DataContainer(string path, string mainpath)
+        public enum DataContainerType
         {
-            DataContainerType = JTokenType.Object;
-            
-            string filename = path.Remove(0, mainpath.Length);
-            using (StreamReader sr = new StreamReader(path))
-            {
-                JObject json_jobject = JsonConvert.DeserializeObject(sr.ReadToEnd()) as JObject;
-
-                Update(json_jobject);
-            }
-            
+            Primitive,
+            Complex,
+            Array,
+            Null
         }
 
+        //Universal usage
+        protected DataContainerType ContainerType;
+        public bool IsMain = false;
+        public int Tier = 0;
+        public string Name = "";
+        public string filename;
+
+        //For primitive containers
+        protected object PrimitiveElement = new object();
+        protected Type PrimitiveType;
+
+        //For complex containers
+        protected int ComplexAmount = 0;
+        protected Dictionary<string, DataContainer> ComplexElements = new Dictionary<string, DataContainer>();
+
+        //For arrays
+        protected int ArrayAmount = 0;
+        protected Dictionary<int, DataContainer> ArrayElements = new Dictionary<int, DataContainer>();
+
+        protected DataContainer ArraysTemplate;
+
+        //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        
+        /// <summary>
+        /// Creates new DataContainer class used for json loading, editing, saving, modyfying
+        /// </summary>
+        public DataContainer()
+        {
+            Name = "";
+
+            ContainerType = DataContainerType.Complex;
+
+            IsMain = true;
+        }
+
+        /// <summary>
+        /// Read
+        /// </summary>
+        /// <param name="path"></param>
+        public DataContainer(string path)
+        {
+            Name = "";
+
+            ContainerType = DataContainerType.Complex;
+
+            IsMain = true;
+
+            ReadTheJson(path);
+        }
 
         //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
+        public void ReadTheJson(string path)
+        {
+            using (StreamReader sr = new StreamReader(path))
+            {
+                Update(new KeyValuePair<string, JToken>(Name, JsonConvert.DeserializeObject(sr.ReadToEnd()) as JObject), Name);
+            }
+        }
+
+        //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+            //TREE CREATION AND POPULATION
+
         /// <summary>
-        /// Constructor when provided with raw jobject will create a tree that allows easy data managment.
-        /// Constructor is only called once, after that the whole tree will be created recusivly
+        /// Constructor used for recursive tree creation
         /// </summary>
         /// <param name="input_jobject"></param>
         /// <param name="Is_orig_obj"></param>
-        public DataContainer(JToken Main_token)
+        public DataContainer(KeyValuePair<string, JToken> InputToken, int ParentTier, string parent)
         {
-            DataContainerType = Main_token.Type;
+            Name = InputToken.Key;
 
-            Update(Main_token);
+            Tier = ++ParentTier;
+
+            ContainerType = GetTheTokenType(InputToken.Value);
+
+            Update(InputToken, parent);
+        }
+       
+        public void Update(KeyValuePair<string, JToken> InputToken, string parent_name)
+        {
+           switch(GetTheTokenType(InputToken.Value))
+           {
+                case DataContainerType.Array:
+                    UpdateArray(InputToken);
+                    break;
+
+                case DataContainerType.Complex:
+                    UpdateComplex(InputToken);
+                    break;
+
+                case DataContainerType.Primitive:
+                    UpdatePrimitive(InputToken);
+                    break;
+           }
         }
 
-        public void Update(JToken input_token)
+        public void UpdateComplex(KeyValuePair<string, JToken> InputToken)
         {
+            //If the Token is complex it has to be a JObject with dictonary of next tokens
+            foreach(KeyValuePair<string, JToken> Pair in (JObject)InputToken.Value)
+            {
+                //Creates a new token if token wasnt found on the list already, updates the token when it exists
+                if(ComplexElements.ContainsKey(Pair.Key))
+                {
+                    ComplexElements[Pair.Key].Update(Pair, Name);
+                }
+                else
+                {
+                    ComplexElements.Add(Pair.Key, new DataContainer(Pair, Tier, Name));
+                }
+            }
+        }
 
-            JTokenType ContainerType = input_token.Type;
+        public void UpdateArray(KeyValuePair<string, JToken> InputToken)
+        {
+            //Array will create template and redirect all data from other array members to it.
+            
+            foreach (JToken ArraysToken in (JArray)InputToken.Value)
+            {
+                ArrayElements.Add(ArrayAmount, new DataContainer(new KeyValuePair<string, JToken>(ArrayAmount.ToString(), ArraysToken), Tier, Name));
+                ArrayAmount++;
+            }
+        }
+
+        public void UpdatePrimitive(KeyValuePair<string, JToken> InputToken)
+        {
+            PrimitiveType = InputToken.Value.ToObject<object>().GetType();
+
+            PrimitiveElement = InputToken.Value.ToObject<object>();
+        }
+
+        public DataContainerType GetTheTokenType(JToken token)
+        {
+            if (token == null)
+            {
+                return DataContainerType.Null;
+            }
+
+            switch(token.Type)
+            {
+                case JTokenType.Array:
+                    return DataContainerType.Array;
+
+                case JTokenType.Object:
+                    return DataContainerType.Complex;
+
+                case JTokenType.Null:
+                    return DataContainerType.Null;
+
+                default:
+                    return DataContainerType.Primitive;
+            }
+        }
+
+        //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+        public JToken GetTheData()
+        {
 
             switch (ContainerType)
             {
-                case JTokenType.Array:
+                case DataContainerType.Complex:
 
-                    int i = 0;
-                    foreach (JToken token in input_token)
+                    JObject job = new JObject();
+
+                    foreach (DataContainer children in ComplexElements.Values)
                     {
-                        child_template = new DataContainer(token);
-
-                        child_elements_array.Add(i, new DataContainer(token));
-                        i++;
+                       job.Add(children.Name, children.GetTheData());
                     }
 
+                    return job;
                     break;
 
-                case JTokenType.Object:
+                case DataContainerType.Primitive:
 
-                    foreach (KeyValuePair<string, JToken> children_token in (JObject)input_token)
+                    JToken token = JToken.FromObject(PrimitiveElement);
+
+                    return token;
+                    break;
+
+                case DataContainerType.Array:
+
+                    JArray job2 = new JArray();
+
+                    foreach (DataContainer children in ArrayElements.Values)
                     {
-                          child_elements_complex.Add(children_token.Key, new DataContainer(children_token.Value));
+                        job2.Add(children.GetTheData());
                     }
 
+                    return job2 as JToken;
                     break;
 
                 default:
 
-                    child_primitive_element = input_token.Value<object>();
+                    return new JObject("REEEEEEEEE");
 
                     break;
             }
+            /*
+            switch (ContainerType)
+            {
+                case DataContainerType.Complex:
+                    foreach (DataContainer Children in ComplexElements.Values)
+                    {
+                        Children.GetTheData();
+                    }
+                    break;
 
+                case DataContainerType.Primitive:
+
+                    break;
+
+                case DataContainerType.Array:
+                    ArraysTemplate.GetTheData();
+                    break;
+            }*/
 
         }
-        
-    }
-}
 
-
-
-
-
-/*
-//protected GraphicalBlock graphicalBlock;
-//Universal usage
-protected bool IsOriginObject;
-protected bool IsComplex;
-
-//For primitive containers
-protected object PrimitiveContent;
-
-//For complex containers
-protected DataContainer child_container;
-protected Dictionary<string, DataContainer> child_elements = new Dictionary<string, DataContainer>();
-
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-/// <summary>
-/// Constructor when provided with a path to json file will create a tree of containers. 
-/// That method automaticly creates origin container
-/// </summary>
-/// <param name="path"></param>
-public DataContainer(string path)
-{
-    IsOriginObject = true;
-
-    using (StreamReader sr = new StreamReader(path))
-    {
-        JToken jobject = JsonConvert.DeserializeObject(sr.ReadToEnd()) as JToken;
-
-        //Check for complex vs primitive
-        if (jobject.HasValues)
+        public void SaveTheJson(string path)
         {
-            IsComplex = true;
-            //Populate children list with next level/tier tokens
-            //Every token will execute the same procedure eventualy creating a tree
-            //The main container is the origin of the tree, primitive containers are the end of the branches
+            JObject job = new JObject();
 
-            JObject job = jobject as JObject;
-
-            foreach (KeyValuePair<string, JToken> pair in job)
+            foreach(DataContainer children in ComplexElements.Values)
             {
-                if (pair.Value.Type != JTokenType.Array)
-                {
-                    child_elements.Add(pair.Key, new DataContainer(pair.Value, pair.Key, false));
-                }
+                job.Add(children.Name, children.GetTheData());
             }
 
-        }
-        else
-        {
-            IsComplex = false;
-            //If token is primitive we can extract value from it
-            PrimitiveContent = jobject.ToObject<object>();
-        }
-
-    }
-}
-
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-/// <summary>
-/// Constructor when provided with raw jobject will create a tree that allows easy data managment.
-/// Constructor is only called once, after that the whole tree will be created recusivly
-/// </summary>
-/// <param name="input_jobject"></param>
-/// <param name="Is_orig_obj"></param>
-public DataContainer(JToken input_jobject, string name, bool Is_orig_obj = true)
-{
-    IsOriginObject = Is_orig_obj;
-
-    //Check for complex vs primitive
-    if (input_jobject.HasValues)
-    {
-        IsComplex = true;
-        //Populate children list with next level/tier tokens
-        //Every token will execute the same procedure eventualy creating a tree
-        //The main container is the origin of the tree, primitive containers are the end of the branches
-
-        JObject job = input_jobject as JObject;
-        foreach (KeyValuePair<string, JToken> pair in job)
-        {
-            if (pair.Value.Type != JTokenType.Array)
+            using (StreamWriter file = File.CreateText(path))
             {
-                child_elements.Add(pair.Key, new DataContainer(pair.Value, pair.Key, false));
+                file.Write(JsonConvert.SerializeObject(job, Formatting.Indented));
             }
         }
-    }
-    else
-    {
-        IsComplex = false;
-        //If token is primitive we can extract value from it
-        PrimitiveContent = input_jobject.ToObject<object>();
+
+        //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     }
 }
-
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-public void Dispose()
-{
-    if (IsComplex)
-    {
-        foreach (DataContainer c in child_elements.Values)
-        {
-            c.Dispose();
-
-        }
-        child_elements = null;
-    }
-
-}*/

@@ -17,6 +17,7 @@ namespace Pa_Looker_2
         public static Form main_form;
         public static ScannerForm scannerForm;
         public static JsonEditorForm jsonEditorForm;
+        public static VisualAdjustment visualAdjustment;
 
         public Main_Form()
         {
@@ -36,6 +37,13 @@ namespace Pa_Looker_2
             if(jsonEditorForm == null)
             jsonEditorForm = new JsonEditorForm();
             jsonEditorForm.Show();
+        }
+
+        private void Show_GUI_Adj_button_Click(object sender, EventArgs e)
+        {
+            if (visualAdjustment == null)
+                visualAdjustment = new VisualAdjustment();
+            visualAdjustment.Show();
         }
     }
 }

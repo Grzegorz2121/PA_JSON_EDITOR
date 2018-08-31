@@ -12,7 +12,6 @@ using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using Newtonsoft;
 using static PA_JSON_EDITOR.GraphicalContainer;
-using static PA_JSON_EDITOR.GraphicalContainerSizes;
 
 namespace PA_JSON_EDITOR
 {
@@ -109,7 +108,7 @@ namespace PA_JSON_EDITOR
         /// </summary>
         /// <param name="input_jobject"></param>
         /// <param name="Is_orig_obj"></param>
-        public DataContainer(KeyValuePair<string, JToken> InputToken, int ParentTier, string parent, Form InParent, Point location)
+        public DataContainer(KeyValuePair<string, JToken> InputToken, int ParentTier, string parent, Form InParent, Point InLocation)
         {
             Name = InputToken.Key;
 
@@ -119,7 +118,7 @@ namespace PA_JSON_EDITOR
 
             Parent = InParent;
 
-            Location = location + (Size)UniversalSize.Marigin + (Size)UniversalSize.Size;
+            Location = new Point(InLocation.X, InLocation.Y);
 
             Update(InputToken, parent);
         }
@@ -131,19 +130,19 @@ namespace PA_JSON_EDITOR
                 case DataContainerType.Array:
                     UpdateArray(InputToken);
 
-                    graphicalContainer = new GraphicalContainer(Parent, this);
+                    graphicalContainer = new GraphicalContainer(Parent, this, Location);
                     break;
 
                 case DataContainerType.Complex:
                     UpdateComplex(InputToken);
 
-                    graphicalContainer = new GraphicalContainer(Parent, this);
+                    graphicalContainer = new GraphicalContainer(Parent, this, Location);
                     break;
 
                 case DataContainerType.Primitive:
                     UpdatePrimitive(InputToken);
 
-                    graphicalContainer = new GraphicalContainer(Parent, this);
+                    graphicalContainer = new GraphicalContainer(Parent, this, Location);
                     break;
            }
         }
@@ -151,7 +150,7 @@ namespace PA_JSON_EDITOR
 
         public void UpdateComplex(KeyValuePair<string, JToken> InputToken)
         {
-            Location = new Point(Location.X, Location.Y + UniversalSize.Marigin.Y + UniversalSize.Size.Y);
+            int i = 0; 
             //If the Token is complex it has to be a JObject with dictonary of next tokens
             foreach(KeyValuePair<string, JToken> Pair in (JObject)InputToken.Value)
             {
@@ -162,21 +161,21 @@ namespace PA_JSON_EDITOR
                 }
                 else
                 {
-                    ComplexElements.Add(Pair.Key, new DataContainer(Pair, Tier, Name, Parent, Location));
+                    ComplexElements.Add(Pair.Key, new DataContainer(Pair, Tier, Name, Parent, new Point(Location.X+i, Location.Y+206)));
                 }
-                Location = new Point(Location.X + UniversalSize.Marigin.X + UniversalSize.Size.X, Location.Y);
+                i += 103;
             }
         }
 
         public void UpdateArray(KeyValuePair<string, JToken> InputToken)
         {
             //Array will create template and redirect all data from other array members to it.
-            Location = new Point(Location.X, Location.Y + UniversalSize.Marigin.Y + UniversalSize.Size.Y);
+            int i = 0;
             foreach (JToken ArraysToken in (JArray)InputToken.Value)
             {
-                ArrayElements.Add(ArrayAmount, new DataContainer(new KeyValuePair<string, JToken>(ArrayAmount.ToString(), ArraysToken), Tier, Name, Parent, Location));
+                ArrayElements.Add(ArrayAmount, new DataContainer(new KeyValuePair<string, JToken>(ArrayAmount.ToString(), ArraysToken), Tier, Name, Parent, new Point(Location.X + i, Location.Y + 206)));
                 ArrayAmount++;
-                Location = new Point(Location.X + UniversalSize.Marigin.X + UniversalSize.Size.X, Location.Y);
+                i += 103;
             }
         }
 

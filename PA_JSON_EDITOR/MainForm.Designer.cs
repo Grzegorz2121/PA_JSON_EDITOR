@@ -32,6 +32,7 @@
             this.pick_folder_dialog = new System.Windows.Forms.SaveFileDialog();
             this.Show_Scanner_button = new System.Windows.Forms.Button();
             this.Show_Json_editor_button = new System.Windows.Forms.Button();
+            this.Show_GUI_Adj_button = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
             // pick_folder_dialog
@@ -62,11 +63,22 @@
             this.Show_Json_editor_button.UseVisualStyleBackColor = true;
             this.Show_Json_editor_button.Click += new System.EventHandler(this.Show_Json_editor_button_Click);
             // 
+            // Show_GUI_Adj_button
+            // 
+            this.Show_GUI_Adj_button.Location = new System.Drawing.Point(12, 41);
+            this.Show_GUI_Adj_button.Name = "Show_GUI_Adj_button";
+            this.Show_GUI_Adj_button.Size = new System.Drawing.Size(114, 23);
+            this.Show_GUI_Adj_button.TabIndex = 5;
+            this.Show_GUI_Adj_button.Text = "Show GUI Adj";
+            this.Show_GUI_Adj_button.UseVisualStyleBackColor = true;
+            this.Show_GUI_Adj_button.Click += new System.EventHandler(this.Show_GUI_Adj_button_Click);
+            // 
             // Main_Form
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(270, 54);
+            this.ClientSize = new System.Drawing.Size(270, 134);
+            this.Controls.Add(this.Show_GUI_Adj_button);
             this.Controls.Add(this.Show_Json_editor_button);
             this.Controls.Add(this.Show_Scanner_button);
             this.Name = "Main_Form";
@@ -80,6 +92,7 @@
         private System.Windows.Forms.SaveFileDialog pick_folder_dialog;
         private System.Windows.Forms.Button Show_Scanner_button;
         private System.Windows.Forms.Button Show_Json_editor_button;
+        private System.Windows.Forms.Button Show_GUI_Adj_button;
     }
 }
 

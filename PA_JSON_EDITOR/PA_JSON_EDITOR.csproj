@@ -50,7 +50,6 @@
   <ItemGroup>
     <Compile Include="DataContainer.cs" />
     <Compile Include="GraphicalContainer.cs" />
-    <Compile Include="GraphicalContainerSizes.cs" />
     <Compile Include="JsonEditorForm.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -72,6 +71,12 @@
     <Compile Include="ScannerForm.Designer.cs">
       <DependentUpon>ScannerForm.cs</DependentUpon>
     </Compile>
+    <Compile Include="VisualAdjustment.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="VisualAdjustment.Designer.cs">
+      <DependentUpon>VisualAdjustment.cs</DependentUpon>
+    </Compile>
     <EmbeddedResource Include="JsonEditorForm.resx">
       <DependentUpon>JsonEditorForm.cs</DependentUpon>
     </EmbeddedResource>
@@ -89,6 +94,9 @@
     </Compile>
     <EmbeddedResource Include="ScannerForm.resx">
       <DependentUpon>ScannerForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="VisualAdjustment.resx">
+      <DependentUpon>VisualAdjustment.cs</DependentUpon>
     </EmbeddedResource>
     <None Include="packages.config" />
     <None Include="Properties\Settings.settings">

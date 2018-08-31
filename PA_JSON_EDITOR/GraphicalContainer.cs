@@ -10,7 +10,6 @@ using System.Windows.Forms;
 using System.IO;
 using PA_JSON_EDITOR;
 using static PA_JSON_EDITOR.DataContainer;
-using static PA_JSON_EDITOR.GraphicalContainerSizes;
 
 namespace PA_JSON_EDITOR
 {
@@ -36,11 +35,13 @@ namespace PA_JSON_EDITOR
 
         public Form ParentForm;
         public DataContainer DataProvider;
+        public Point GUILocation;
 
-        public GraphicalContainer(Form InParentForm, DataContainer InDataProvider)
+        public GraphicalContainer(Form InParentForm, DataContainer InDataProvider, Point InLocation)
         {
             ParentForm = InParentForm;
             DataProvider = InDataProvider;
+            GUILocation = InLocation;
 
             switch(DataProvider.ContainerType)
             {
@@ -60,8 +61,8 @@ namespace PA_JSON_EDITOR
 
         void CreatePrimitive()
         {
-            CreateButton("Save", ParentForm, PrimitiveSaveButton, PrimitiveSize.SaveButtonLoc, PrimitiveSize.SaveButtonSize ,Save_Primitive_button_click);
-            CreateTextBox(DataProvider.PrimitiveElement.ToString(), ParentForm ,PrimitiveTextBox, PrimitiveSize.TextBoxLoc, PrimitiveSize.TextBoxSeize);
+            CreateButton("Save", ParentForm, PrimitiveSaveButton, new Point(GUILocation.X + 3, GUILocation.Y + 174), Save_Primitive_button_click);
+            CreateTextBox(DataProvider.PrimitiveElement.ToString(), ParentForm ,PrimitiveTextBox, new Point(GUILocation.X + 3, GUILocation.Y + 3));
         }
 
         void CreateArray()
@@ -76,16 +77,16 @@ namespace PA_JSON_EDITOR
                 return list.ToArray<string>();
             }
            
-            CreateButton("Add", ParentForm, ArrayAddButton, ArraySize.AddButtonLoc, ArraySize.AddButtonSize ,Add_Complex_button_click);
-            CreateButton("Delete", ParentForm, ArrayAddButton, ArraySize.DeleteButtonLoc, ArraySize.DeleteButtonSize, Delete_Complex_button_click);
-            CreateListBox(Helper() ,ParentForm , ArrayListBox, ArraySize.ListBoxLoc, ArraySize.ListBoxSeize, ListBox_Complex_index_change);
+            CreateButton("Add", ParentForm, ArrayAddButton, new Point(GUILocation.X + 3, GUILocation.Y + 174), Add_Complex_button_click);
+            CreateButton("Delete", ParentForm, ArrayAddButton, new Point(GUILocation.X + 84, GUILocation.Y + 174), Delete_Complex_button_click);
+            CreateListBox(Helper() ,ParentForm , ArrayListBox, new Point(GUILocation.X + 3, GUILocation.Y + 3), ListBox_Complex_index_change);
         }
 
         void CreateComplex()
         {
-            CreateButton("Add", ParentForm, ComplexAddButton, ComplexSize.AddButtonLoc, ComplexSize.AddButtonSize, Add_Complex_button_click);
-            CreateButton("Delete", ParentForm, ComplexAddButton, ComplexSize.DeleteButtonLoc, ComplexSize.DeleteButtonSize, Delete_Complex_button_click);
-            CreateListBox(DataProvider.ComplexElements.Keys.ToArray<string>() ,ParentForm , ComplexListBox, ComplexSize.ListBoxLoc, ComplexSize.ListBoxSeize, ListBox_Complex_index_change);
+            CreateButton("Add", ParentForm, ComplexAddButton, new Point(GUILocation.X + 3, GUILocation.Y + 174), Add_Complex_button_click);
+            CreateButton("Delete", ParentForm, ComplexAddButton, new Point(GUILocation.X + 84, GUILocation.Y + 174), Delete_Complex_button_click);
+            CreateListBox(DataProvider.ComplexElements.Keys.ToArray<string>() ,ParentForm , ComplexListBox, new Point(GUILocation.X + 3, GUILocation.Y + 3), ListBox_Complex_index_change);
         }
         //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -117,33 +118,28 @@ namespace PA_JSON_EDITOR
             in_point = new Point(in_point.X + DataProvider.Location.X, in_point.Y + DataProvider.Location.Y);
         }
 
-        void CreateTextBox(string item, Form parent, TextBox textbox, Point Marigin, Point Size)
+        void CreateTextBox(string item, Form parent, TextBox textbox, Point InLocation)
         {
-            //OffsetThePoint(ref Size);
-            OffsetThePoint(ref Marigin);
-
+            
             textbox = new TextBox();
             textbox.Text = item;
 
-            textbox.Height = Size.Y;
-            textbox.Width = Size.X;
+            textbox.Height = 20;
+            textbox.Width = 194;
 
-            textbox.Location = Marigin;
+            textbox.Location = InLocation;
 
             parent.Controls.Add(textbox);
         }
 
-        void CreateListBox(string[] items, Form parent, ListBox listbox, Point Marigin, Point Size, EventHandler callback)
+        void CreateListBox(string[] items, Form parent, ListBox listbox, Point InLocation, EventHandler callback)
         {
-            //OffsetThePoint(ref Size);
-            OffsetThePoint(ref Marigin);
-
             listbox = new ListBox();
 
-            listbox.Height = Size.Y;
-            listbox.Width = Size.X;
+            listbox.Height = 160;
+            listbox.Width = 194;
 
-            listbox.Location = Marigin;
+            listbox.Location = InLocation;
 
             foreach(string item in items)
             {
@@ -153,17 +149,14 @@ namespace PA_JSON_EDITOR
             parent.Controls.Add(listbox);
         }
 
-        void CreateButton(string name, Form parent, Button button, Point Marigin, Point Size, EventHandler callback)
+        void CreateButton(string name, Form parent, Button button, Point InLocation, EventHandler callback)
         {
-            //OffsetThePoint(ref Size);
-            OffsetThePoint(ref Marigin);
-
             button = new Button();
 
-            button.Height = Size.Y;
-            button.Width = Size.X;
+            button.Height = 23;
+            button.Width = 75;
 
-            button.Location = Marigin;
+            button.Location = InLocation;
 
             button.Text = name;
             button.Click += callback;

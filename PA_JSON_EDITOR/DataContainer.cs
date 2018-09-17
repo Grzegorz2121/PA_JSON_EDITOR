@@ -35,6 +35,7 @@ namespace PA_JSON_EDITOR
         public DataContainerType ContainerType
         { get; private set; }
 
+        public bool DataOnly = false;
         public bool IsMain { get; private set; } = false;
         public int Tier { get; private set; } = 0;
         public string Name { get; private set; } = "";
@@ -56,6 +57,19 @@ namespace PA_JSON_EDITOR
 
         //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         
+        public DataContainer(string path)
+        {
+            Name = "";
+
+            ContainerType = DataContainerType.Complex;
+
+            IsMain = true;
+
+            DataOnly = true;
+
+            ReadTheJson(path);
+        }
+
         /// <summary>
         /// Creates new DataContainer class used for json loading, editing, saving, modyfying
         /// </summary>
@@ -76,7 +90,7 @@ namespace PA_JSON_EDITOR
         /// <param name="path"></param>
         public DataContainer(string path, Form InParent)
         {
-            //Location = new Point(30, 30);
+            Location = new Point(10, 50);
 
             Name = "";
 
@@ -108,7 +122,7 @@ namespace PA_JSON_EDITOR
         /// </summary>
         /// <param name="input_jobject"></param>
         /// <param name="Is_orig_obj"></param>
-        public DataContainer(KeyValuePair<string, JToken> InputToken, int ParentTier, string parent, Form InParent, Point InLocation)
+        public DataContainer(KeyValuePair<string, JToken> InputToken, int ParentTier, string parent, Form InParent, Point InLocation, bool inDataOnly)
         {
             Name = InputToken.Key;
 
@@ -120,6 +134,8 @@ namespace PA_JSON_EDITOR
 
             Location = new Point(InLocation.X, InLocation.Y);
 
+            DataOnly = inDataOnly;
+
             Update(InputToken, parent);
         }
        
@@ -130,19 +146,32 @@ namespace PA_JSON_EDITOR
                 case DataContainerType.Array:
                     UpdateArray(InputToken);
 
-                    graphicalContainer = new GraphicalContainer(Parent, this, Location);
+                    if(!DataOnly)
+                    {
+                        graphicalContainer = new GraphicalContainer(Parent, this, Location, !IsMain);
+                    }
+
                     break;
 
                 case DataContainerType.Complex:
                     UpdateComplex(InputToken);
 
-                    graphicalContainer = new GraphicalContainer(Parent, this, Location);
+                    if (!DataOnly)
+                    {
+                        graphicalContainer = new GraphicalContainer(Parent, this, Location, !IsMain);
+                    }       
+
                     break;
 
                 case DataContainerType.Primitive:
                     UpdatePrimitive(InputToken);
 
-                    graphicalContainer = new GraphicalContainer(Parent, this, Location);
+                    if (!DataOnly)
+                    {
+                        graphicalContainer = new GraphicalContainer(Parent, this, Location, !IsMain);
+                    }
+                        
+
                     break;
            }
         }
@@ -161,7 +190,7 @@ namespace PA_JSON_EDITOR
                 }
                 else
                 {
-                    ComplexElements.Add(Pair.Key, new DataContainer(Pair, Tier, Name, Parent, new Point(Location.X+i, Location.Y+206)));
+                    ComplexElements.Add(Pair.Key, new DataContainer(Pair, Tier, Name, Parent, new Point(Location.X+i, Location.Y+206), DataOnly));
                 }
                 i += 103;
             }
@@ -173,7 +202,7 @@ namespace PA_JSON_EDITOR
             int i = 0;
             foreach (JToken ArraysToken in (JArray)InputToken.Value)
             {
-                ArrayElements.Add(ArrayAmount, new DataContainer(new KeyValuePair<string, JToken>(ArrayAmount.ToString(), ArraysToken), Tier, Name, Parent, new Point(Location.X + i, Location.Y + 206)));
+                ArrayElements.Add(ArrayAmount, new DataContainer(new KeyValuePair<string, JToken>(ArrayAmount.ToString(), ArraysToken), Tier, Name, Parent, new Point(Location.X + i, Location.Y + 206), DataOnly));
                 ArrayAmount++;
                 i += 103;
             }
@@ -269,6 +298,13 @@ namespace PA_JSON_EDITOR
             {
                 file.Write(JsonConvert.SerializeObject(job, Formatting.Indented));
             }
+        }
+
+        //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+        public void Delete(string item)
+        {
+
         }
 
         //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////

@@ -36,9 +36,12 @@ namespace PA_JSON_EDITOR
         public Form ParentForm;
         public DataContainer DataProvider;
         public Point GUILocation;
+        public bool IsHidden;
 
-        public GraphicalContainer(Form InParentForm, DataContainer InDataProvider, Point InLocation)
+        public GraphicalContainer(Form InParentForm, DataContainer InDataProvider, Point InLocation, bool Hidden)
         {
+            IsHidden = Hidden;
+
             ParentForm = InParentForm;
             DataProvider = InDataProvider;
             GUILocation = InLocation;
@@ -61,8 +64,8 @@ namespace PA_JSON_EDITOR
 
         void CreatePrimitive()
         {
-            CreateButton("Save", ParentForm, PrimitiveSaveButton, new Point(GUILocation.X + 3, GUILocation.Y + 174), Save_Primitive_button_click);
-            CreateTextBox(DataProvider.PrimitiveElement.ToString(), ParentForm ,PrimitiveTextBox, new Point(GUILocation.X + 3, GUILocation.Y + 3));
+            CreateButton("Save", ParentForm, PrimitiveSaveButton, new Point(GUILocation.X + 3, GUILocation.Y + 174), Save_Primitive_button_click, IsHidden);
+            CreateTextBox(DataProvider.PrimitiveElement.ToString(), ParentForm ,PrimitiveTextBox, new Point(GUILocation.X + 3, GUILocation.Y + 3), IsHidden);
         }
 
         void CreateArray()
@@ -77,16 +80,16 @@ namespace PA_JSON_EDITOR
                 return list.ToArray<string>();
             }
            
-            CreateButton("Add", ParentForm, ArrayAddButton, new Point(GUILocation.X + 3, GUILocation.Y + 174), Add_Complex_button_click);
-            CreateButton("Delete", ParentForm, ArrayAddButton, new Point(GUILocation.X + 84, GUILocation.Y + 174), Delete_Complex_button_click);
-            CreateListBox(Helper() ,ParentForm , ArrayListBox, new Point(GUILocation.X + 3, GUILocation.Y + 3), ListBox_Complex_index_change);
+            CreateButton("Add", ParentForm, ArrayAddButton, new Point(GUILocation.X + 3, GUILocation.Y + 174), Add_Complex_button_click, IsHidden);
+            CreateButton("Delete", ParentForm, ArrayAddButton, new Point(GUILocation.X + 84, GUILocation.Y + 174), Delete_Complex_button_click, IsHidden);
+            CreateListBox(Helper() ,ParentForm , ArrayListBox, new Point(GUILocation.X + 3, GUILocation.Y + 3), ListBox_Complex_index_change, IsHidden);
         }
 
         void CreateComplex()
         {
-            CreateButton("Add", ParentForm, ComplexAddButton, new Point(GUILocation.X + 3, GUILocation.Y + 174), Add_Complex_button_click);
-            CreateButton("Delete", ParentForm, ComplexAddButton, new Point(GUILocation.X + 84, GUILocation.Y + 174), Delete_Complex_button_click);
-            CreateListBox(DataProvider.ComplexElements.Keys.ToArray<string>() ,ParentForm , ComplexListBox, new Point(GUILocation.X + 3, GUILocation.Y + 3), ListBox_Complex_index_change);
+            CreateButton("Add", ParentForm, ComplexAddButton, new Point(GUILocation.X + 3, GUILocation.Y + 174), Add_Complex_button_click, IsHidden);
+            CreateButton("Delete", ParentForm, ComplexAddButton, new Point(GUILocation.X + 84, GUILocation.Y + 174), Delete_Complex_button_click, IsHidden);
+            CreateListBox(DataProvider.ComplexElements.Keys.ToArray<string>() ,ParentForm , ComplexListBox, new Point(GUILocation.X + 3, GUILocation.Y + 3), ListBox_Complex_index_change, IsHidden);
         }
         //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -111,6 +114,49 @@ namespace PA_JSON_EDITOR
         }
         //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
+        public void Show()
+        {
+            switch (DataProvider.ContainerType)
+            {
+                case DataContainerType.Array:
+                    ArrayListBox.Show();
+                    ArrayDeleteButton.Show();
+                    ArrayAddButton.Show();
+                    break;
+                case DataContainerType.Complex:
+                    ComplexListBox.Show();
+                    ComplexDeleteButton.Show();
+                    ComplexAddButton.Show();
+                    break;
+                case DataContainerType.Primitive:
+                    PrimitiveTextBox.Show();
+                    PrimitiveSaveButton.Show();
+                    break;
+            }
+        }
+
+        public void Hide()
+        {
+            switch (DataProvider.ContainerType)
+            {
+                case DataContainerType.Array:
+                    ArrayListBox.Hide();
+                    ArrayDeleteButton.Hide();
+                    ArrayAddButton.Hide();
+                    break;
+                case DataContainerType.Complex:
+                    ComplexListBox.Hide();
+                    ComplexDeleteButton.Hide();
+                    ComplexAddButton.Hide();
+                    break;
+                case DataContainerType.Primitive:
+                    PrimitiveTextBox.Hide();
+                    PrimitiveSaveButton.Hide();
+                    break;
+            }
+        }
+
+        //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         //HELPER FUNCTIONS
 
         public void OffsetThePoint(ref Point in_point)
@@ -118,7 +164,7 @@ namespace PA_JSON_EDITOR
             in_point = new Point(in_point.X + DataProvider.Location.X, in_point.Y + DataProvider.Location.Y);
         }
 
-        void CreateTextBox(string item, Form parent, TextBox textbox, Point InLocation)
+        void CreateTextBox(string item, Form parent, TextBox textbox, Point InLocation, bool hidden)
         {
             
             textbox = new TextBox();
@@ -130,9 +176,12 @@ namespace PA_JSON_EDITOR
             textbox.Location = InLocation;
 
             parent.Controls.Add(textbox);
+
+            if(hidden)
+            textbox.Hide();
         }
 
-        void CreateListBox(string[] items, Form parent, ListBox listbox, Point InLocation, EventHandler callback)
+        void CreateListBox(string[] items, Form parent, ListBox listbox, Point InLocation, EventHandler callback, bool hidden)
         {
             listbox = new ListBox();
 
@@ -147,9 +196,12 @@ namespace PA_JSON_EDITOR
             }
             listbox.SelectedIndexChanged += callback;
             parent.Controls.Add(listbox);
+
+            if (hidden)
+            listbox.Hide();
         }
 
-        void CreateButton(string name, Form parent, Button button, Point InLocation, EventHandler callback)
+        void CreateButton(string name, Form parent, Button button, Point InLocation, EventHandler callback, bool hidden)
         {
             button = new Button();
 
@@ -161,6 +213,9 @@ namespace PA_JSON_EDITOR
             button.Text = name;
             button.Click += callback;
             parent.Controls.Add(button);
+
+            if (hidden)
+            button.Hide();
         }
     }
 }

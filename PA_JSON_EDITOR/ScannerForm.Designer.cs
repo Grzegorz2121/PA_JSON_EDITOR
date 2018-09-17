@@ -30,8 +30,8 @@
         {
             this.Scan_button = new System.Windows.Forms.Button();
             this.Save_Properties_button = new System.Windows.Forms.Button();
-            this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
             this.listBox1 = new System.Windows.Forms.ListBox();
+            this.saveFileDialog1 = new System.Windows.Forms.SaveFileDialog();
             this.SuspendLayout();
             // 
             // Scan_button
@@ -54,10 +54,6 @@
             this.Save_Properties_button.UseVisualStyleBackColor = true;
             this.Save_Properties_button.Click += new System.EventHandler(this.Save_Properties_button_Click);
             // 
-            // openFileDialog1
-            // 
-            this.openFileDialog1.FileName = "openFileDialog1";
-            // 
             // listBox1
             // 
             this.listBox1.FormattingEnabled = true;
@@ -65,6 +61,10 @@
             this.listBox1.Name = "listBox1";
             this.listBox1.Size = new System.Drawing.Size(333, 368);
             this.listBox1.TabIndex = 1;
+            // 
+            // saveFileDialog1
+            // 
+            this.saveFileDialog1.FileOk += new System.ComponentModel.CancelEventHandler(this.saveFileDialog1_FileOk);
             // 
             // ScannerForm
             // 
@@ -84,7 +84,7 @@
 
         private System.Windows.Forms.Button Scan_button;
         private System.Windows.Forms.Button Save_Properties_button;
-        private System.Windows.Forms.OpenFileDialog openFileDialog1;
         private System.Windows.Forms.ListBox listBox1;
+        private System.Windows.Forms.SaveFileDialog saveFileDialog1;
     }
 }

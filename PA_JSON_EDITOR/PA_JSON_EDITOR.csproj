@@ -49,8 +49,12 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="DataContainer.cs" />
+    <Compile Include="DataContainerArray.cs" />
+    <Compile Include="DataContainerComplex.cs" />
+    <Compile Include="DataContainerMain.cs" />
+    <Compile Include="DataContainerPrimitive.cs" />
     <Compile Include="GraphicalContainer.cs" />
-    <Compile Include="IData.cs" />
+    <Compile Include="Interfaces.cs" />
     <Compile Include="JsonEditorForm.cs">
       <SubType>Form</SubType>
     </Compile>

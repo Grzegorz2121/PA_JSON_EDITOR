@@ -27,28 +27,57 @@ namespace PA_JSON_EDITOR
         {
             ContainerType = DataContainerType.Complex;
 
-            int i = 0;
             //If the Token is complex it has to be a JObject with dictonary of next tokens
             foreach (KeyValuePair<string, JToken> Pair in (JObject)InTokenPair.Value)
             {
                 //Creates a new token if token wasnt found on the list already, updates the token when it exists
-                if (ComplexElements.ContainsKey(Pair.Key))
+               /* if (ComplexElements.ContainsKey(Pair.Key))
                 {
                     ComplexElements[Pair.Key].Update(Pair, Name);
                 }
                 else
-                {
-                    ComplexElements.Add(Pair.Key, new DataContainer(Pair, Tier, Name, Parent, new Point(Location.X + i, Location.Y + 206), DataOnly));
-                }
-                i += 103;
+                {*/
+                    ComplexElements.Add(Pair.Key, CreateNewDataContainer(Pair, Tier, Name));
+               // }
             }
         }
 
-        //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
         public override JToken GetTheData()
         {
+            JObject OutputArray = new JObject();
+            foreach (KeyValuePair<string, IDataContainer> ChildContainer in ComplexElements)
+            {
+                OutputArray.Add(ChildContainer.Key, ChildContainer.Value.GetTheData());
+            }
+            return (JToken)OutputArray;
+        }
 
+
+        //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+        public string[] GetItemNames()
+        {
+            return ComplexElements.Keys.ToArray<string>();
+        }
+
+        public int GetAmountOfItems()
+        {
+            return ComplexElements.Count;
+        }
+
+        public void AddItem(string name, IDataContainer newItem)
+        {
+            ComplexElements.Add(name, newItem);
+        }
+
+        public void EditItem(string name, IDataContainer newItem)
+        {
+            ComplexElements[name] = newItem;
+        }
+
+        public void DeleteItem(string name)
+        {
+            ComplexElements.Remove(name);
         }
     }
 }

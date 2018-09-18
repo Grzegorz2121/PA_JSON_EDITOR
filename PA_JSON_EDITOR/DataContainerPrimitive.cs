@@ -37,5 +37,17 @@ namespace PA_JSON_EDITOR
         {
             return JToken.FromObject(PrimitiveElement);
         }
+
+        //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+        public object GetValue()
+        {
+            return PrimitiveElement;
+        }
+
+        public void EditValue(object newObject)
+        {
+            PrimitiveElement = newObject;
+        }
     }
 }

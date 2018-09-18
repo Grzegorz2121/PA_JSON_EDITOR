@@ -15,69 +15,70 @@ using static PA_JSON_EDITOR.GraphicalContainer;
 
 namespace PA_JSON_EDITOR
 {
-    class DataContainerMain : DataContainer, IDataComplex
+    class DataContainerMain : IDataComplex
     {
-        /// <summary>
-        /// Read
-        /// </summary>
-        /// <param name="path"></param>
-        public DataContainer(string path, Form InParent)
-        {
-            Location = new Point(10, 50);
-
-            Name = "";
-
-            ContainerType = DataContainerType.Complex;
-
-            IsMain = true;
-
-            Parent = InParent;
-
-            ReadTheJson(path);
-        }
-
-        public DataContainer(string path)
-        {
-            Name = "";
-
-            ContainerType = DataContainerType.Complex;
-
-            IsMain = true;
-
-            DataOnly = true;
-
-            ReadTheJson(path);
-        }
-
-        public void ReadTheJson(string path)
-        {
-            using (StreamReader sr = new StreamReader(path))
-            {
-                Update(new KeyValuePair<string, JToken>(Name, JsonConvert.DeserializeObject(sr.ReadToEnd()) as JObject), Name);
-            }
-        }
-
         //For complex containers
         public int ComplexAmount = 0;
-        public Dictionary<string, DataContainer> ComplexElements = new Dictionary<string, DataContainer>();
+        public Dictionary<string, IDataContainer> ComplexElements = new Dictionary<string, IDataContainer>();
 
-        public void UpdateComplex(KeyValuePair<string, JToken> InputToken)
+        public DataContainerMain(string path)
         {
-            int i = 0;
-            //If the Token is complex it has to be a JObject with dictonary of next tokens
-            foreach (KeyValuePair<string, JToken> Pair in (JObject)InputToken.Value)
+            string[] temp = path.Split('\\');
+            
+            using (StreamReader sr = new StreamReader(path))
             {
-                //Creates a new token if token wasnt found on the list already, updates the token when it exists
-                if (ComplexElements.ContainsKey(Pair.Key))
+                foreach(KeyValuePair<string, JToken> Pair in (JObject)JsonConvert.DeserializeObject(sr.ReadToEnd()))
                 {
-                    ComplexElements[Pair.Key].Update(Pair, Name);
+                    ComplexElements.Add(Pair.Key, CreateNewDataContainer(Pair, 0, temp[temp.Length - 1]));
                 }
-                else
-                {
-                    ComplexElements.Add(Pair.Key, new DataContainer(Pair, Tier, Name, Parent, new Point(Location.X + i, Location.Y + 206), DataOnly));
-                }
-                i += 103;
             }
+        }
+
+        private IDataContainer CreateNewDataContainer(KeyValuePair<string, JToken> InputToken, int ParentTier, string ParentName)
+        {
+            switch (InputToken.Value.Type)
+            {
+                case JTokenType.Array:
+                    return new DataContainerArray(InputToken, ParentTier, ParentName);
+
+                case JTokenType.Object:
+                    return new DataContainerComplex(InputToken, ParentTier, ParentName);
+
+                case JTokenType.Null:
+                    return null;
+
+                default:
+                    return new DataContainerPrimitive(InputToken, ParentTier, ParentName);
+
+            }
+
+        }
+
+        //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+        public string[] GetItemNames()
+        {
+            return ComplexElements.Keys.ToArray<string>();
+        }
+
+        public int GetAmountOfItems()
+        {
+            return ComplexElements.Count;
+        }
+
+        public void AddItem(string name, IDataContainer newItem)
+        {
+            ComplexElements.Add(name, newItem);
+        }
+
+        public void EditItem(string name, IDataContainer newItem)
+        {
+            ComplexElements[name] = newItem;
+        }
+
+        public void DeleteItem(string name)
+        {
+            ComplexElements.Remove(name);
         }
 
         public void SaveTheJson(string path)

@@ -54,7 +54,7 @@
     <Compile Include="DataContainerMain.cs" />
     <Compile Include="DataContainerPrimitive.cs" />
     <Compile Include="GraphicalContainer.cs" />
-    <Compile Include="Interfaces.cs" />
+    <Compile Include="DataContainerInterfaces.cs" />
     <Compile Include="JsonEditorForm.cs">
       <SubType>Form</SubType>
     </Compile>

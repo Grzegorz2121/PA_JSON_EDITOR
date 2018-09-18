@@ -30,20 +30,43 @@ namespace PA_JSON_EDITOR
             ContainerType = DataContainerType.Array;
 
             //Array will create template and redirect all data from other array members to it.
-            int i = 0;
             foreach (JToken ArraysToken in (JArray)InTokenPair.Value)
             {
-                ArrayElements.Add(ArrayAmount, new DataContainer(new KeyValuePair<string, JToken>(ArrayAmount.ToString(), ArraysToken), Tier, Name, Parent, new Point(Location.X + i, Location.Y + 206), DataOnly));
+                ArrayElements.Add(ArrayAmount, CreateNewDataContainer(new KeyValuePair<string, JToken>(ArrayAmount.ToString(), ArraysToken), Tier, Name));
                 ArrayAmount++;
-                i += 103;
             }
+        }
+
+        public override JToken GetTheData()
+        {
+            JArray OutputArray = new JArray();
+            foreach(IDataContainer ChildContainer in ArrayElements.Values)
+            {
+                OutputArray.Add(ChildContainer.GetTheData());
+            }
+            return (JToken)OutputArray;
         }
 
         //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-        public override JToken GetTheData()
+        public int GetAmountOfItems()
         {
+            return ArrayElements.Count;
+        }
 
+        public void AddItem(IDataContainer newValue)
+        {
+            ArrayElements.Add(ArrayElements.Count, newValue);
+        }
+
+        public void EditItem(int position, IDataContainer newValue)
+        {
+            ArrayElements[position] = newValue;
+        }
+
+        public void DeleteItem(int position)
+        {
+            ArrayElements.Remove(position);
         }
     }
 }

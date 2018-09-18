@@ -31,9 +31,9 @@ namespace PA_JSON_EDITOR
     {
         int GetAmountOfItems();
 
-        void AddValue(DataContainer newObject);
-        void EditValue(int position, DataContainer newObject);
-        void DeleteValue(int position);
+        void AddItem(IDataContainer newObject);
+        void EditItem(int position, IDataContainer newObject);
+        void DeleteItem(int position);
     }
 
     public interface IDataComplex
@@ -41,8 +41,8 @@ namespace PA_JSON_EDITOR
         string[] GetItemNames();
         int GetAmountOfItems();
 
-        void AddValue(string newName, DataContainer newObject);
-        void EditValue(string name, DataContainer newObject);
-        void DeleteValue(string name);
+        void AddItem(string newName, IDataContainer newObject);
+        void EditItem(string name, IDataContainer newObject);
+        void DeleteItem(string name);
     }
 }

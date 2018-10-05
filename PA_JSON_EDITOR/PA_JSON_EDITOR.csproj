@@ -48,13 +48,24 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="DataContainer.cs" />
-    <Compile Include="DataContainerArray.cs" />
-    <Compile Include="DataContainerComplex.cs" />
-    <Compile Include="DataContainerMain.cs" />
-    <Compile Include="DataContainerPrimitive.cs" />
-    <Compile Include="GraphicalContainer.cs" />
-    <Compile Include="DataContainerInterfaces.cs" />
+    <Compile Include="DataContainers\DataContainer.cs" />
+    <Compile Include="DataContainers\DataContainerArray.cs" />
+    <Compile Include="DataContainers\DataContainerComplex.cs" />
+    <Compile Include="DataContainers\DataContainerMain.cs" />
+    <Compile Include="DataContainers\DataContainerPrimitive.cs" />
+    <Compile Include="DataContainers\DataContainerInterfaces.cs" />
+    <Compile Include="GraphicalContainers\Form1.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="GraphicalContainers\Form1.Designer.cs">
+      <DependentUpon>Form1.cs</DependentUpon>
+    </Compile>
+    <Compile Include="GraphicalContainers\GraphicalContainer.cs" />
+    <Compile Include="GraphicalContainers\GraphicalContainerArray.cs" />
+    <Compile Include="GraphicalContainers\GraphicalContainerComplex.cs" />
+    <Compile Include="GraphicalContainers\GraphicalContainerInterfaces.cs" />
+    <Compile Include="GraphicalContainers\GraphicalContainerMain.cs" />
+    <Compile Include="GraphicalContainers\GraphicalContainerPrimitive.cs" />
     <Compile Include="JsonEditorForm.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -82,6 +93,9 @@
     <Compile Include="VisualAdjustment.Designer.cs">
       <DependentUpon>VisualAdjustment.cs</DependentUpon>
     </Compile>
+    <EmbeddedResource Include="GraphicalContainers\Form1.resx">
+      <DependentUpon>Form1.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="JsonEditorForm.resx">
       <DependentUpon>JsonEditorForm.cs</DependentUpon>
     </EmbeddedResource>

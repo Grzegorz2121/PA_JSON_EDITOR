@@ -11,7 +11,6 @@ using Newtonsoft.Json.Serialization;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using Newtonsoft;
-using static PA_JSON_EDITOR.GraphicalContainer;
 
 namespace PA_JSON_EDITOR
 {

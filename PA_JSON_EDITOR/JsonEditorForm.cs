@@ -28,7 +28,7 @@ namespace PA_JSON_EDITOR
         private void openFileDialog1_FileOk(object sender, CancelEventArgs e)
         {
             JsonPath = openFileDialog1.FileName;
-            dataContainer = new DataContainer(JsonPath, this);
+           // dataContainer = new DataContainer(JsonPath, this);
             Console.WriteLine();
         }
 
@@ -36,7 +36,7 @@ namespace PA_JSON_EDITOR
         {
             if(dataContainer != null)
             {
-                dataContainer.SaveTheJson(JsonPath);
+               // dataContainer.SaveTheJson(JsonPath);
             }
         }
     }

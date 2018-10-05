@@ -11,12 +11,26 @@ using Newtonsoft.Json.Serialization;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using Newtonsoft;
-using static PA_JSON_EDITOR.GraphicalContainer;
 
 namespace PA_JSON_EDITOR
 {
+    //TODO: DataContainers should be able to create new childrens. Implement universal function for that
+    //Put wrapper functions in array and the complex containers to create new children.
+    //Also new empty object constructors are needed (without data but with names, tier ect...) (default data?)
+    // primitive -> create new <obj type>
+    // array -> create new <obj type> (amount)
+    // complex -> create new
+
+    // A way to store constructs? Like a new gun ect... (Of course JSON, implementation matters)
+
+    // Easy: get the items from array and the complex to attach graphical layer elements to them
+
     public interface IDataContainer
     {
+        //Identyfication of the data container (used in graphical layer tree building)
+        DataContainer.DataContainerType GetTheType();
+        string GetTheName();
+
         JToken GetTheData();
         IDataContainer CreateNewDataContainer(KeyValuePair<string, JToken> InputToken, int ParentTier, string ParentName);
     }
@@ -40,6 +54,7 @@ namespace PA_JSON_EDITOR
     {
         string[] GetItemNames();
         int GetAmountOfItems();
+        IDataContainer GetChild(string name);
 
         void AddItem(string newName, IDataContainer newObject);
         void EditItem(string name, IDataContainer newObject);

@@ -11,11 +11,10 @@ using Newtonsoft.Json.Serialization;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using Newtonsoft;
-using static PA_JSON_EDITOR.GraphicalContainer;
 
 namespace PA_JSON_EDITOR
 {
-    class DataContainerMain : IDataComplex
+    public class DataContainerMain : IDataComplex
     {
         //For complex containers
         public int ComplexAmount = 0;
@@ -64,6 +63,16 @@ namespace PA_JSON_EDITOR
         public int GetAmountOfItems()
         {
             return ComplexElements.Count;
+        }
+
+        public IDataContainer GetChild(string name)
+        {
+            return ComplexElements[name];
+        }
+
+        public IDataContainer[] GetChilden()
+        {
+            return ComplexElements.Values.ToArray<IDataContainer>();
         }
 
         public void AddItem(string name, IDataContainer newItem)

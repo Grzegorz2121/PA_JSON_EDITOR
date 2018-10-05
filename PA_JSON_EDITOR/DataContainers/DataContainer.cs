@@ -11,7 +11,6 @@ using Newtonsoft.Json.Serialization;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using Newtonsoft;
-using static PA_JSON_EDITOR.GraphicalContainer;
 
 namespace PA_JSON_EDITOR
 {
@@ -52,6 +51,16 @@ namespace PA_JSON_EDITOR
         //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
         //GENERAL METHODS (CAN BE USED IN EVERY OBJECT TYPE [primitive, array, complex])
+
+        public string GetTheName()
+        {
+            return Name;
+        }
+
+        public DataContainer.DataContainerType GetTheType()
+        {
+            return ContainerType;
+        }
 
         public abstract JToken GetTheData();
 

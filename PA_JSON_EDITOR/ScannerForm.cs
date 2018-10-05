@@ -20,7 +20,7 @@ namespace PA_JSON_EDITOR
     public partial class ScannerForm : Form
     {
         public HashContainer[] hashContainer = new HashContainer[4];
-        public List<DataContainer> ScannedFilesData = new List<DataContainer>();
+        public List<DataContainerMain> ScannedFilesData = new List<DataContainerMain>();
 
         public ScannerForm()
         {
@@ -62,7 +62,7 @@ namespace PA_JSON_EDITOR
                         if (temp[temp.Length-1].Remove(temp[temp.Length-1].LastIndexOf('.'))==temp[temp.Length-2])
                         {
                             listBox1.Items.Add(temp[temp.Length-1]);
-                            ScannedFilesData.Add(new DataContainer(file));
+                            ScannedFilesData.Add(new DataContainerMain(file));
                         }
                    }
                 }

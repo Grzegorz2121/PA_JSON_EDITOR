@@ -31,13 +31,19 @@ namespace PA_JSON_EDITOR
             panel = CreatePanel(new Point(inLocation.X, inLocation.Y + 100), new Size(100, 100),
                 new Control[]
                 {
-                    editButton = CreateButton("Edit", new Point(3,3), new Size(80,20)),
+                    editButton = CreateButton("Edit", new Point(3,3), new Size(80,20), EditButtonClick),
                     textBox = CreateTextBox(new Point(3,26), new Size(80,20), dataContainer.GetValue().ToString())
                 },
                 parentForm
                 );
             
         }
+
+        private void EditButtonClick(object sender, EventArgs e)
+        {
+
+        }
+
 
         public override void Hide()
         {

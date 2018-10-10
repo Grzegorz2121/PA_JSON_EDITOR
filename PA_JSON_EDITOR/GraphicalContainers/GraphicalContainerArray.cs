@@ -20,7 +20,9 @@ namespace PA_JSON_EDITOR
 
         public Dictionary<int, IGraphicalContainer> ArrayGraphicalElements = new Dictionary<int, IGraphicalContainer>();
 
-        //DataContainerArray slave;
+        DataContainerArray slave;
+        Point location;
+        Form parent;
 
         Panel panel;
         Button editButton;
@@ -31,9 +33,9 @@ namespace PA_JSON_EDITOR
 
         public GraphicalContainerArray(DataContainerArray dataContainer, Point inLocation, Size inSize, Form parentForm) : base(dataContainer, parentForm, inLocation, inSize)
         {
-            // slave = dataContainer as DataContainerArray;
-
-
+            slave = dataContainer;
+            parent = parentForm;
+            location = inLocation;
             /*
             foreach (IDataContainer children in dataContainer.GetChilden())
             {
@@ -44,13 +46,70 @@ namespace PA_JSON_EDITOR
             panel = CreatePanel(new Point(inLocation.X, inLocation.Y + 100), new Size(100, 100),
                 new Control[]
                 {
-                    addButton = CreateButton("Add", new Point(3,3), new Size(30,20)),
-                    deleteButton = CreateButton("Delete", new Point(36,3), new Size(30,20)),
-                    editButton = CreateButton("Edit", new Point(69,3), new Size(30,20)),
-                    listBox = CreateListBox(new Point(3,26), new Size(94,74), new List<int>(dataContainer.GetTheList().Keys))
+                    addButton = CreateButton("Add", new Point(3,3), new Size(30,20), AddButtonClick),
+                    deleteButton = CreateButton("Delete", new Point(36,3), new Size(30,20), DeleteButtonClick),
+                    editButton = CreateButton("Edit", new Point(69,3), new Size(30,20), EditButtonClick),
+                    listBox = CreateListBox(new Point(3,26), new Size(94,74), new List<int>(dataContainer.GetTheList().Keys), ListBoxChange)
                 },
                 parentForm
                 );
+        }
+
+        private void AddButtonClick(object sender, EventArgs e)
+        {
+
+        }
+
+        private void DeleteButtonClick(object sender, EventArgs e)
+        {
+
+        }
+
+        private void EditButtonClick(object sender, EventArgs e)
+        {
+
+        }
+
+        private void ListBoxChange(object sender, EventArgs e)
+        {
+
+            List<int> newToCreate = new List<int>();
+            List<int> oldToDelete = new List<int>();
+            List<int> selected = new List<int>();
+
+            foreach (int i in listBox.SelectedItems)
+            {
+                selected.Add(i);
+            }
+            
+            foreach (int i in selected)
+            {
+                if (!ArrayGraphicalElements.ContainsKey(i))
+                {
+                    newToCreate.Add(i);
+                }
+            }
+            foreach (int i in ArrayGraphicalElements.Keys)
+            {
+                if (!selected.Contains(i))
+                {
+                    oldToDelete.Add(i);
+                }
+            }
+
+            foreach(int i in oldToDelete)
+            {
+                ArrayGraphicalElements[i].Dispose();
+                ArrayGraphicalElements.Remove(i);
+            }
+
+            Point temp = new Point(location.X+103*ArrayGraphicalElements.Count, location.Y + 103);
+            foreach (int i in newToCreate)
+            {
+                ArrayGraphicalElements.Add(i, CreateNewGraphicalContainer(slave.GetChild(i), parent, temp, new Size()));
+                temp = new Point(temp.X + 103, temp.Y);
+            }
+            temp = location;
         }
 
         public override void Hide()

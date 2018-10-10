@@ -20,8 +20,6 @@ namespace PA_JSON_EDITOR
         //For complex containers
         public Dictionary<string, IGraphicalContainer> GraphicalElements = new Dictionary<string, IGraphicalContainer>();
 
-
-
         public GraphicalContainerMain(DataContainerMain mainDataContainer, Form mainForm , Point startLocation)
         {
             Point temp = startLocation;

@@ -56,7 +56,7 @@ namespace PA_JSON_EDITOR
 
         }
 
-        public Button CreateButton(string name, Point offset, Size size)
+        public Button CreateButton(string name, Point offset, Size size, MouseEventHandler handle)
         {
             Button temp = new Button
             {
@@ -64,6 +64,7 @@ namespace PA_JSON_EDITOR
                 Location = offset,
                 Size = size
             };
+            temp.MouseClick += handle;
             return temp;
         }
 
@@ -79,27 +80,30 @@ namespace PA_JSON_EDITOR
         }
 
 
-        public ListBox CreateListBox(Point offset, Size size, List<string> items)
+        public ListBox CreateListBox(Point offset, Size size, List<string> items, EventHandler handler)
         {
             ListBox temp = new ListBox
             {
                 Location = offset,
                 Size = size
             };
+            temp.SelectedIndexChanged += handler;
             foreach(string s in items)
             temp.Items.Add(s);
             return temp;
         }
 
-        public ListBox CreateListBox(Point offset, Size size, List<int> items)
+        public ListBox CreateListBox(Point offset, Size size, List<int> items, EventHandler handler)
         {
             ListBox temp = new ListBox
             {
                 Location = offset,
                 Size = size
             };
+            temp.SelectionMode = SelectionMode.MultiSimple;
+            temp.SelectedIndexChanged += handler;
             foreach (int i in items)
-                temp.Items.Add(i);
+            temp.Items.Add(i);
             return temp;
         }
 

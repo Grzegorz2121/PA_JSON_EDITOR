@@ -18,24 +18,23 @@ namespace PA_JSON_EDITOR
     {
         //For primitive containers
 
-        DataContainerPrimitive slave;
+       // DataContainerPrimitive slave;
 
         Panel panel;
         Button editButton;
         TextBox textBox;
         //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-        public GraphicalContainerPrimitive(IDataContainer dataContainer) : base()
+        public GraphicalContainerPrimitive(DataContainerPrimitive dataContainer, Point inLocation, Size inSize, Form parentForm) : base(dataContainer, parentForm, inLocation, inSize)
         {
-            slave = dataContainer as DataContainerPrimitive;
-
-            panel = CreatePanel(new Point(), new Size(),
+            // slave = dataContainer as DataContainerPrimitive;
+            panel = CreatePanel(new Point(inLocation.X, inLocation.Y + 100), new Size(100, 100),
                 new Control[]
                 {
-                    editButton = CreateButton("Edit", new Point(), new Size()),
-                    textBox = CreateTextBox(new Point(), new Size())
+                    editButton = CreateButton("Edit", new Point(3,3), new Size(80,20)),
+                    textBox = CreateTextBox(new Point(3,26), new Size(80,20), dataContainer.GetValue().ToString())
                 },
-                new Form()
+                parentForm
                 );
             
         }

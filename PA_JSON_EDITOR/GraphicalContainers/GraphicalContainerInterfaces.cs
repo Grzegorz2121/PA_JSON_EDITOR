@@ -20,7 +20,7 @@ namespace PA_JSON_EDITOR
         //TODO: Graphical elements show() hide() dispose() methods
 
       //  JToken GetTheData();
-        IGraphicalContainer CreateNewGraphicalContainer(IDataContainer dataContainer);
+        IGraphicalContainer CreateNewGraphicalContainer(IDataContainer dataContainer, Form parentForm, Point inLoc, Size inSize);
         void Show();
         void Hide();
         void Dispose();

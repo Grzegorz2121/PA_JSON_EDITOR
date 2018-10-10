@@ -43,7 +43,13 @@ namespace PA_JSON_EDITOR
 
     public interface IDataArray
     {
-        int GetAmountOfItems();
+        //int GetAmountOfItems();
+        IDataContainer GetChild(int position);
+
+        Dictionary<int, IDataContainer> GetTheList();
+
+      /*  int[] GetItemNames();
+        IDataContainer[] GetChilden();*/
 
         void AddItem(IDataContainer newObject);
         void EditItem(int position, IDataContainer newObject);
@@ -52,9 +58,13 @@ namespace PA_JSON_EDITOR
 
     public interface IDataComplex
     {
-        string[] GetItemNames();
-        int GetAmountOfItems();
+        //int GetAmountOfItems();
         IDataContainer GetChild(string name);
+    
+        Dictionary<string, IDataContainer> GetTheList();
+        /*
+        string[] GetItemNames();
+        IDataContainer[] GetChilden();*/
 
         void AddItem(string newName, IDataContainer newObject);
         void EditItem(string name, IDataContainer newObject);

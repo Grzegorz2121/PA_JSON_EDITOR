@@ -18,7 +18,9 @@ namespace PA_JSON_EDITOR
     {
         //For arrays
 
-        DataContainerComplex slave;
+        public Dictionary<int, IGraphicalContainer> ArrayGraphicalElements = new Dictionary<int, IGraphicalContainer>();
+
+        //DataContainerArray slave;
 
         Panel panel;
         Button editButton;
@@ -27,19 +29,27 @@ namespace PA_JSON_EDITOR
         ListBox listBox;
         //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-        public GraphicalContainerArray(IDataContainer dataContainer) : base()
+        public GraphicalContainerArray(DataContainerArray dataContainer, Point inLocation, Size inSize, Form parentForm) : base(dataContainer, parentForm, inLocation, inSize)
         {
-            slave = dataContainer as DataContainerComplex;
+            // slave = dataContainer as DataContainerArray;
 
-            panel = CreatePanel(new Point(), new Size(),
+
+            /*
+            foreach (IDataContainer children in dataContainer.GetChilden())
+            {
+                ArrayElements.Add(children.GetTheName(), CreateNewGraphicalContainer(children, parentForm, inLocation, new Size()));
+            }*/
+
+
+            panel = CreatePanel(new Point(inLocation.X, inLocation.Y + 100), new Size(100, 100),
                 new Control[]
                 {
-                    addButton = CreateButton("Add", new Point(), new Size()),
-                    deleteButton = CreateButton("Delete", new Point(), new Size()),
-                    editButton = CreateButton("Edit", new Point(), new Size()),
-                    listBox = CreateListBox(new Point(), new Size())
+                    addButton = CreateButton("Add", new Point(3,3), new Size(30,20)),
+                    deleteButton = CreateButton("Delete", new Point(36,3), new Size(30,20)),
+                    editButton = CreateButton("Edit", new Point(69,3), new Size(30,20)),
+                    listBox = CreateListBox(new Point(3,26), new Size(94,74), new List<int>(dataContainer.GetTheList().Keys))
                 },
-                new Form()
+                parentForm
                 );
         }
 

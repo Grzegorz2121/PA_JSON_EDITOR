@@ -53,7 +53,7 @@ namespace PA_JSON_EDITOR
 
 
         //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
+        /*
         public string[] GetItemNames()
         {
             return ComplexElements.Keys.ToArray<string>();
@@ -62,18 +62,23 @@ namespace PA_JSON_EDITOR
         public int GetAmountOfItems()
         {
             return ComplexElements.Count;
+        }*/
+
+        public Dictionary<string, IDataContainer> GetTheList()
+        {
+            return ComplexElements;
         }
 
         public IDataContainer GetChild(string name)
         {
             return ComplexElements[name];
         }
-
+        /*
         public IDataContainer[] GetChilden()
         {
             return ComplexElements.Values.ToArray<IDataContainer>();
         }
-
+        */
         public void AddItem(string name, IDataContainer newItem)
         {
             ComplexElements.Add(name, newItem);

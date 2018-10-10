@@ -12,7 +12,8 @@ namespace PA_JSON_EDITOR
 {
     public partial class JsonEditorForm : Form
     {
-        public DataContainer dataContainer;
+        public GraphicalContainerMain con;
+        public DataContainerMain dataContainer;
         public string JsonPath;
 
         public JsonEditorForm()
@@ -28,7 +29,13 @@ namespace PA_JSON_EDITOR
         private void openFileDialog1_FileOk(object sender, CancelEventArgs e)
         {
             JsonPath = openFileDialog1.FileName;
-           // dataContainer = new DataContainer(JsonPath, this);
+            dataContainer = new DataContainerMain(JsonPath);
+            con = new GraphicalContainerMain(dataContainer, this, new Point(3, 3));
+
+            Console.WriteLine(this.Controls.Count);
+            // dataContainer = new DataContainer(JsonPath, this);
+
+
             Console.WriteLine();
         }
 

@@ -18,7 +18,9 @@ namespace PA_JSON_EDITOR
     {
         //For complex containers
 
-        DataContainerComplex slave;
+        public Dictionary<string, IGraphicalContainer> ComplexGraphicalElements = new Dictionary<string, IGraphicalContainer>();
+
+       // DataContainerComplex slave;
 
         Panel panel;
         Button editButton;
@@ -27,20 +29,34 @@ namespace PA_JSON_EDITOR
         ListBox listBox;
         //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-        public GraphicalContainerComplex(IDataContainer dataContainer) : base()
+        public GraphicalContainerComplex(DataContainerComplex dataContainer, Point inLocation, Size inSize, Form parentForm) : base(dataContainer, parentForm, inLocation, inSize)
         {
-            slave = dataContainer as DataContainerComplex;
+           // slave = dataContainer as DataContainerComplex;
 
-            panel = CreatePanel(new Point(), new Size(),
+            /*
+            foreach (IDataContainer children in dataContainer.GetChilden())
+            {
+                GraphicalElements.Add(children.GetTheName(), CreateNewGraphicalContainer(children, parentForm, inLocation, new Size()));
+            }*/
+
+
+            panel = CreatePanel(new Point(inLocation.X, inLocation.Y + 100), new Size(100, 100),
                 new Control[]
                 {
+                    addButton = CreateButton("Add", new Point(3,3), new Size(30,20)),
+                    deleteButton = CreateButton("Delete", new Point(36,3), new Size(30,20)),
+                    editButton = CreateButton("Edit", new Point(69,3), new Size(30,20)),
+                    listBox = CreateListBox(new Point(3,26), new Size(94,74), new List<string>(dataContainer.GetTheList().Keys))
+                    /*
                     addButton = CreateButton("Add", new Point(), new Size()),
                     deleteButton = CreateButton("Delete", new Point(), new Size()),
                     editButton = CreateButton("Edit", new Point(), new Size()),
-                    listBox = CreateListBox(new Point(), new Size())
+                    listBox = CreateListBox(new Point(), new Size(), new List<string>(dataContainer.GetTheList().Keys))*/
                 },
-                new Form()
+                parentForm
                 );
+
+                
         }
 
         public override void Hide()

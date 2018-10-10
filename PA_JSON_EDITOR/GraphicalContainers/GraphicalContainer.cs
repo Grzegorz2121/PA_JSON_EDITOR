@@ -27,7 +27,7 @@ namespace PA_JSON_EDITOR
         /// </summary>
         /// <param name="input_jobject"></param>
         /// <param name="Is_orig_obj"></param>
-        public GraphicalContainer(IDataContainer container, Form parentform, Point loc, Size size)
+        public GraphicalContainer(IDataContainer container, Form parentForm, Point inLoc, Size inSize)
         {
 
         }
@@ -36,21 +36,21 @@ namespace PA_JSON_EDITOR
 
         //GENERAL METHODS (CAN BE USED IN EVERY OBJECT TYPE [primitive, array, complex])
 
-        public virtual IGraphicalContainer CreateNewGraphicalContainer(IDataContainer dataContainer)
+        public virtual IGraphicalContainer CreateNewGraphicalContainer(IDataContainer dataContainer, Form parentForm, Point inLoc, Size inSize)
         {
             switch (dataContainer.GetTheType())
             {
                 case DataContainer.DataContainerType.Array:
-                    return new GraphicalContainerArray(dataContainer);
+                    return new GraphicalContainerArray(dataContainer as DataContainerArray, inLoc, inSize, parentForm);
 
                 case DataContainer.DataContainerType.Complex:
-                    return new GraphicalContainerComplex(dataContainer);
+                    return new GraphicalContainerComplex(dataContainer as DataContainerComplex, inLoc, inSize, parentForm);
 
                 case DataContainer.DataContainerType.Null:
                     return null;
 
                 default:
-                    return new GraphicalContainerPrimitive(dataContainer);
+                    return new GraphicalContainerPrimitive(dataContainer as DataContainerPrimitive, inLoc, inSize, parentForm);
 
             }
 
@@ -67,38 +67,58 @@ namespace PA_JSON_EDITOR
             return temp;
         }
 
-        public TextBox CreateTextBox(Point offset, Size size)
+        public TextBox CreateTextBox(Point offset, Size size, string text)
         {
             TextBox temp = new TextBox
             {
                 Location = offset,
                 Size = size
             };
+            temp.Text = text;
             return temp;
         }
 
-        public ListBox CreateListBox(Point offset, Size size)
+
+        public ListBox CreateListBox(Point offset, Size size, List<string> items)
         {
             ListBox temp = new ListBox
             {
                 Location = offset,
                 Size = size
             };
+            foreach(string s in items)
+            temp.Items.Add(s);
             return temp;
         }
 
+        public ListBox CreateListBox(Point offset, Size size, List<int> items)
+        {
+            ListBox temp = new ListBox
+            {
+                Location = offset,
+                Size = size
+            };
+            foreach (int i in items)
+                temp.Items.Add(i);
+            return temp;
+        }
+
+
         public Panel CreatePanel(Point offset, Size size, Control[] childElements, Form parentForm)
         {
+            
             Panel temp = new Panel
             {
                 Location = offset,
                 Size = size
             };
+            temp.BackColor = Color.Aqua;
+            parentForm.Controls.Add(temp);
             foreach (Control c in childElements)
             {
                 temp.Controls.Add(c);
             }
-            parentForm.Controls.Add(temp);
+            
             return temp;
         }
 

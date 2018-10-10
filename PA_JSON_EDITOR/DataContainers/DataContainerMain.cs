@@ -14,7 +14,7 @@ using Newtonsoft;
 
 namespace PA_JSON_EDITOR
 {
-    public class DataContainerMain : IDataComplex
+    public class DataContainerMain
     {
         //For complex containers
         public int ComplexAmount = 0;

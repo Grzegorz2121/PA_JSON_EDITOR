@@ -22,31 +22,49 @@ namespace PA_JSON_EDITOR
 
 
 
-        public GraphicalContainerMain(DataContainerMain mainDataContainer, Form mainForm)
+        public GraphicalContainerMain(DataContainerMain mainDataContainer, Form mainForm , Point startLocation)
         {
-           foreach(IDataContainer children in mainDataContainer.GetChilden())
-           {
-                GraphicalElements.Add(children.GetTheName(), CreateNewGraphicalContainer(children));
-           }
+            Point temp = startLocation;
+            foreach (IDataContainer children in mainDataContainer.GetChilden())
+            {
+                GraphicalElements.Add(children.GetTheName(), CreateNewGraphicalContainer(children, mainForm, startLocation, new Size()));
+                startLocation = new Point(startLocation.X + 103, startLocation.Y);
+            }
+            startLocation = temp;
+            /*
+           foreach(IGraphicalContainer gc in GraphicalElements.Values)
+            {
+                gc.Show();
+            }*/
         }
 
+        private IGraphicalContainer[] CreateNewGraphicalContainer(IDataContainer[] dataContainers, Form parentForm, Point inLoc, Size inSize)
+        {
+            List<IGraphicalContainer> temp = new List<IGraphicalContainer>();
 
+            foreach(IDataContainer c in dataContainers)
+            {
+                temp.Add(CreateNewGraphicalContainer(c, parentForm, inLoc, inSize));
+            }
 
-        private IGraphicalContainer CreateNewGraphicalContainer(IDataContainer dataContainer)
+            return temp.ToArray<IGraphicalContainer>();
+        }
+
+            private IGraphicalContainer CreateNewGraphicalContainer(IDataContainer dataContainer, Form parentForm, Point inLoc, Size inSize)
         {
             switch (dataContainer.GetTheType())
             {
                 case DataContainer.DataContainerType.Array:
-                    return new GraphicalContainerArray(dataContainer);
+                    return new GraphicalContainerArray(dataContainer as DataContainerArray, inLoc, inSize, parentForm);
 
                 case DataContainer.DataContainerType.Complex:
-                    return new GraphicalContainerComplex(dataContainer);
+                    return new GraphicalContainerComplex(dataContainer as DataContainerComplex, inLoc, inSize, parentForm);
 
                 case DataContainer.DataContainerType.Null:
                     return null;
 
                 default:
-                    return new GraphicalContainerPrimitive(dataContainer);
+                    return new GraphicalContainerPrimitive(dataContainer as DataContainerPrimitive, inLoc, inSize, parentForm);
 
             }
 

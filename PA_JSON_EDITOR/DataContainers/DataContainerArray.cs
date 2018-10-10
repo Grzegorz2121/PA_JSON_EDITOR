@@ -47,11 +47,37 @@ namespace PA_JSON_EDITOR
         }
 
         //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
+        /*
         public int GetAmountOfItems()
         {
             return ArrayElements.Count;
+        }*/
+
+        public IDataContainer GetChild(int position)
+        {
+            return ArrayElements[position];
         }
+
+        public Dictionary<int, IDataContainer> GetTheList()
+        {
+            return ArrayElements;
+        }
+
+        /*
+        public int[] GetItemNames()
+        {
+            List<int> temp = new List<int>();
+            foreach(int i in ArrayElements.Keys)
+            {
+                temp.Add(i);
+            }
+            return temp.ToArray<int>();
+        }*/
+        /*
+        public IDataContainer[] GetChilden()
+        {
+            return ArrayElements.Values.ToArray<IDataContainer>();
+        }*/
 
         public void AddItem(IDataContainer newValue)
         {

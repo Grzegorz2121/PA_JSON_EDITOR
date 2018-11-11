@@ -37,6 +37,29 @@ namespace PA_JSON_EDITOR
             return JToken.FromObject(PrimitiveElement);
         }
 
+        public override List<string> FindValueInData(string key)
+        {
+            if(PrimitiveType == typeof(string))
+            {
+                List<string> result = new List<string>();
+                string s = PrimitiveElement as string;
+
+                if(s.Contains(key))
+                {
+                    result.Add(Name + @":" + s);
+                    return result;
+                }
+                else
+                {
+                    return null;
+                }
+            }
+            else
+            {
+                return null;
+            }
+        }
+
         //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
         public object GetValue()

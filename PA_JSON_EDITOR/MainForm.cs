@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.IO;
 using PA_JSON_EDITOR;
+using PA_JSON_EDITOR.PapaConverter;
 
 namespace Pa_Looker_2
 {
@@ -18,6 +19,7 @@ namespace Pa_Looker_2
         public static ScannerForm scannerForm;
         public static JsonEditorForm jsonEditorForm;
         public static VisualAdjustment visualAdjustment;
+        public static PapaForm papaForm;
 
         public Main_Form()
         {
@@ -44,6 +46,13 @@ namespace Pa_Looker_2
             if (visualAdjustment == null)
                 visualAdjustment = new VisualAdjustment();
             visualAdjustment.Show();
+        }
+
+        private void Show_Papa_button_Click(object sender, EventArgs e)
+        {
+            if (papaForm == null)
+                papaForm = new PapaForm();
+            papaForm.Show();
         }
     }
 }

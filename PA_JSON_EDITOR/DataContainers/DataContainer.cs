@@ -62,6 +62,8 @@ namespace PA_JSON_EDITOR
             return ContainerType;
         }
 
+        public abstract List<string> FindValueInData(string key);
+
         public abstract JToken GetTheData();
 
         public virtual IDataContainer CreateNewDataContainer(KeyValuePair<string, JToken> InputToken, int ParentTier, string ParentName)
@@ -75,7 +77,7 @@ namespace PA_JSON_EDITOR
                     return new DataContainerComplex(InputToken, ParentTier, ParentName);
 
                 case JTokenType.Null:
-                    return null;
+                    return new DataContainerNull(InputToken, ParentTier, ParentName);
 
                 default:
                     return new DataContainerPrimitive(InputToken, ParentTier, ParentName);

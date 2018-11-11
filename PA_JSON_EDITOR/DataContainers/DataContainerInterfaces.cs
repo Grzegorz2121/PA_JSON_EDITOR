@@ -33,6 +33,12 @@ namespace PA_JSON_EDITOR
 
         JToken GetTheData();
         IDataContainer CreateNewDataContainer(KeyValuePair<string, JToken> InputToken, int ParentTier, string ParentName);
+        List<string> FindValueInData(string key);
+    }
+
+    public interface IDataNull
+    {
+
     }
 
     public interface IDataPrimitive

@@ -46,6 +46,28 @@ namespace PA_JSON_EDITOR
             return (JToken)OutputArray;
         }
 
+        public override List<string> FindValueInData(string key)
+        {
+            List<string> results = new List<string>();
+            foreach (DataContainer d in ArrayElements.Values)
+            {
+                List<string> temp = d.FindValueInData(key);
+                if (temp != null)
+                {
+                    foreach (string s in temp)
+                    {
+                        if (s != null)
+                        {
+                            results.Add(s);
+                        }
+                    }
+                }
+
+
+            }
+            return results;
+        }
+
         //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         /*
         public int GetAmountOfItems()

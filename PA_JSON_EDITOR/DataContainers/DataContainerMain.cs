@@ -19,14 +19,17 @@ namespace PA_JSON_EDITOR
         //For complex containers
         public int ComplexAmount = 0;
         public Dictionary<string, IDataContainer> ComplexElements = new Dictionary<string, IDataContainer>();
+        public string path1;
 
         public DataContainerMain(string path)
         {
             string[] temp = path.Split('\\');
-            
+
+            path1 = temp[temp.Length - 1];
+
             using (StreamReader sr = new StreamReader(path))
             {
-                foreach(KeyValuePair<string, JToken> Pair in (JObject)JsonConvert.DeserializeObject(sr.ReadToEnd()))
+                foreach (KeyValuePair<string, JToken> Pair in (JObject)JsonConvert.DeserializeObject(sr.ReadToEnd()))
                 {
                     ComplexElements.Add(Pair.Key, CreateNewDataContainer(Pair, 0, temp[temp.Length - 1]));
                 }
@@ -44,7 +47,7 @@ namespace PA_JSON_EDITOR
                     return new DataContainerComplex(InputToken, ParentTier, ParentName);
 
                 case JTokenType.Null:
-                    return null;
+                    return new DataContainerNull(InputToken, ParentTier, ParentName);
 
                 default:
                     return new DataContainerPrimitive(InputToken, ParentTier, ParentName);
@@ -53,7 +56,38 @@ namespace PA_JSON_EDITOR
 
         }
 
+        public List<string> FindValueInData(string key)
+        {
+            List<string> results = new List<string>();
+            foreach (DataContainer d in ComplexElements.Values)
+            {
+                List<string> temp = d.FindValueInData(key);
+                if (temp != null)
+                {
+                    foreach (string s in temp)
+                    {
+                        if (s != null)
+                        {
+                            results.Add(s);
+                        }
+                    }
+                }
+
+            }
+
+            for (int i = 0; i < results.Count; i++)
+            {
+                results[i] = path1 + @":" + results[i];
+            }
+            return results;
+        }
+
         //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+        public string[] GetNamesOfMainProperties()
+        {
+            return ComplexElements.Keys.ToArray<string>();
+        }
 
         public string[] GetItemNames()
         {

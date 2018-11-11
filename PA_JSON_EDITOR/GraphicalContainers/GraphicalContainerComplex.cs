@@ -16,11 +16,11 @@ namespace PA_JSON_EDITOR
 {
     class GraphicalContainerComplex : GraphicalContainer
     {
-        //For complex containers
+        //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+        // VARIABLES INITIALISATION (complex)
 
         public Dictionary<string, IGraphicalContainer> ComplexGraphicalElements = new Dictionary<string, IGraphicalContainer>();
-
-        // DataContainerComplex slave;
 
         DataContainerComplex slave;
         Point location;
@@ -31,20 +31,16 @@ namespace PA_JSON_EDITOR
         Button addButton;
         Button deleteButton;
         ListBox listBox;
+
         //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+        // PARENT FUNCTIONALITY OVERRIDE
 
         public GraphicalContainerComplex(DataContainerComplex dataContainer, Point inLocation, Size inSize, Form parentForm) : base(dataContainer, parentForm, inLocation, inSize)
         {
             slave = dataContainer;
             parent = parentForm;
             location = inLocation;
-
-            /*
-            foreach (IDataContainer children in dataContainer.GetChilden())
-            {
-                GraphicalElements.Add(children.GetTheName(), CreateNewGraphicalContainer(children, parentForm, inLocation, new Size()));
-            }*/
-
 
             panel = CreatePanel(new Point(inLocation.X, inLocation.Y + 100), new Size(100, 100),
                 new Control[]
@@ -53,16 +49,15 @@ namespace PA_JSON_EDITOR
                     deleteButton = CreateButton("Delete", new Point(36,3), new Size(30,20), DeleteButtonClick),
                     editButton = CreateButton("Edit", new Point(69,3), new Size(30,20), EditButtonClick),
                     listBox = CreateListBox(new Point(3,26), new Size(94,74), new List<string>(dataContainer.GetTheList().Keys), ListBoxChange)
-                    /*
-                    addButton = CreateButton("Add", new Point(), new Size()),
-                    deleteButton = CreateButton("Delete", new Point(), new Size()),
-                    editButton = CreateButton("Edit", new Point(), new Size()),
-                    listBox = CreateListBox(new Point(), new Size(), new List<string>(dataContainer.GetTheList().Keys))*/
                 },
                 parentForm
                 );
     
         }
+
+        //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+        //CONTAINER SPECYFIC FUNCTIONS
 
         private void AddButtonClick(object sender, EventArgs e)
         {
@@ -154,9 +149,6 @@ namespace PA_JSON_EDITOR
             panel = null;
         }
 
-
         //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-
     }
 }

@@ -12,7 +12,7 @@ using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using Newtonsoft;
 
-namespace PA_JSON_EDITOR.PapaConverter
+namespace PA_JSON_EDITOR.PapaEditor
 {
     /// <summary>
     /// Class represents a C struct, allows for easy data manipulation

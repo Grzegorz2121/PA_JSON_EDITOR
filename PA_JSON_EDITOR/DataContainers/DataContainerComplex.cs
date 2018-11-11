@@ -16,28 +16,24 @@ namespace PA_JSON_EDITOR
 {
     class DataContainerComplex : DataContainer, IDataComplex
     {
-        //For complex containers
-        public int ComplexAmount = 0;
+        //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+        // VARIABLES INITIALISATION (complex)
+
+        public int complex_amount = 0;
         public Dictionary<string, IDataContainer> ComplexElements = new Dictionary<string, IDataContainer>();
 
         //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+        // PARENT FUNCTIONALITY OVERRIDE
 
         public DataContainerComplex(KeyValuePair<string, JToken> InTokenPair, int InParentTier, string InParentName) : base(InTokenPair, InParentTier, InParentName)
         {
             ContainerType = DataContainerType.Complex;
 
-            //If the Token is complex it has to be a JObject with dictonary of next tokens
             foreach (KeyValuePair<string, JToken> Pair in (JObject)InTokenPair.Value)
             {
-                //Creates a new token if token wasnt found on the list already, updates the token when it exists
-               /* if (ComplexElements.ContainsKey(Pair.Key))
-                {
-                    ComplexElements[Pair.Key].Update(Pair, Name);
-                }
-                else
-                {*/
-                    ComplexElements.Add(Pair.Key, CreateNewDataContainer(Pair, Tier, Name));
-               // }
+                ComplexElements.Add(Pair.Key, CreateNewDataContainer(Pair, Tier, Name));
             }
         }
 
@@ -71,18 +67,9 @@ namespace PA_JSON_EDITOR
             }
             return results;
         }
-
         //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        /*
-        public string[] GetItemNames()
-        {
-            return ComplexElements.Keys.ToArray<string>();
-        }
 
-        public int GetAmountOfItems()
-        {
-            return ComplexElements.Count;
-        }*/
+        //CONTAINER SPECYFIC FUNCTIONS
 
         public Dictionary<string, IDataContainer> GetTheList()
         {
@@ -93,12 +80,7 @@ namespace PA_JSON_EDITOR
         {
             return ComplexElements[name];
         }
-        /*
-        public IDataContainer[] GetChilden()
-        {
-            return ComplexElements.Values.ToArray<IDataContainer>();
-        }
-        */
+
         public void AddItem(string name, IDataContainer newItem)
         {
             ComplexElements.Add(name, newItem);
@@ -113,5 +95,7 @@ namespace PA_JSON_EDITOR
         {
             ComplexElements.Remove(name);
         }
+
+        //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     }
 }

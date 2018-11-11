@@ -14,6 +14,8 @@ using Newtonsoft;
 
 namespace PA_JSON_EDITOR
 {
+    //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
     //TODO: DataContainers should be able to create new childrens. Implement universal function for that
     //Put wrapper functions in array and the complex containers to create new children.
     //Also new empty object constructors are needed (without data but with names, tier ect...) (default data?)
@@ -27,7 +29,6 @@ namespace PA_JSON_EDITOR
 
     public interface IDataContainer
     {
-        //Identyfication of the data container (used in graphical layer tree building)
         DataContainer.DataContainerType GetTheType();
         string GetTheName();
 
@@ -49,13 +50,9 @@ namespace PA_JSON_EDITOR
 
     public interface IDataArray
     {
-        //int GetAmountOfItems();
         IDataContainer GetChild(int position);
 
         Dictionary<int, IDataContainer> GetTheList();
-
-      /*  int[] GetItemNames();
-        IDataContainer[] GetChilden();*/
 
         void AddItem(IDataContainer newObject);
         void EditItem(int position, IDataContainer newObject);
@@ -64,16 +61,14 @@ namespace PA_JSON_EDITOR
 
     public interface IDataComplex
     {
-        //int GetAmountOfItems();
         IDataContainer GetChild(string name);
     
         Dictionary<string, IDataContainer> GetTheList();
-        /*
-        string[] GetItemNames();
-        IDataContainer[] GetChilden();*/
 
         void AddItem(string newName, IDataContainer newObject);
         void EditItem(string name, IDataContainer newObject);
         void DeleteItem(string name);
     }
+
+    //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 }

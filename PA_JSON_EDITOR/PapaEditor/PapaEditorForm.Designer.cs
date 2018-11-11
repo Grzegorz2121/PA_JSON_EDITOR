@@ -1,6 +1,6 @@
-﻿namespace PA_JSON_EDITOR.PapaConverter
+﻿namespace PA_JSON_EDITOR.PapaEditor
 {
-    partial class PapaForm
+    partial class PapaEditorForm
     {
         /// <summary>
         /// Required designer variable.
@@ -29,7 +29,7 @@
         private void InitializeComponent()
         {
             this.pick_papa_button = new System.Windows.Forms.Button();
-            this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
+            this.open_file_dialog = new System.Windows.Forms.OpenFileDialog();
             this.SuspendLayout();
             // 
             // pick_papa_button
@@ -42,19 +42,18 @@
             this.pick_papa_button.UseVisualStyleBackColor = true;
             this.pick_papa_button.Click += new System.EventHandler(this.button1_Click);
             // 
-            // openFileDialog1
+            // open_file_dialog
             // 
-            this.openFileDialog1.FileName = "openFileDialog1";
-            this.openFileDialog1.FileOk += new System.ComponentModel.CancelEventHandler(this.openFileDialog1_FileOk);
+            this.open_file_dialog.FileOk += new System.ComponentModel.CancelEventHandler(this.open_file_dialog_FileOk);
             // 
-            // PapaForm
+            // PapaEditorForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(216, 61);
             this.Controls.Add(this.pick_papa_button);
-            this.Name = "PapaForm";
-            this.Text = "PapaForm";
+            this.Name = "PapaEditorForm";
+            this.Text = "Papa Editor";
             this.ResumeLayout(false);
 
         }
@@ -62,6 +61,6 @@
         #endregion
 
         private System.Windows.Forms.Button pick_papa_button;
-        private System.Windows.Forms.OpenFileDialog openFileDialog1;
+        private System.Windows.Forms.OpenFileDialog open_file_dialog;
     }
 }

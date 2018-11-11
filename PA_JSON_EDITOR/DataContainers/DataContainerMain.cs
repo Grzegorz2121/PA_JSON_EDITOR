@@ -16,10 +16,18 @@ namespace PA_JSON_EDITOR
 {
     public class DataContainerMain
     {
-        //For complex containers
+
+        //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+        // VARIABLES INITIALISATION (main)
+
         public int ComplexAmount = 0;
         public Dictionary<string, IDataContainer> ComplexElements = new Dictionary<string, IDataContainer>();
         public string path1;
+
+        //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+        // FILE READING FUNCTIONALITY + CHILD CREATION
 
         public DataContainerMain(string path)
         {
@@ -84,6 +92,8 @@ namespace PA_JSON_EDITOR
 
         //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
+        //CONTAINER SPECYFIC FUNCTIONS
+
         public string[] GetNamesOfMainProperties()
         {
             return ComplexElements.Keys.ToArray<string>();
@@ -138,5 +148,7 @@ namespace PA_JSON_EDITOR
                 file.Write(JsonConvert.SerializeObject(job, Formatting.Indented));
             }
         }
+
+        //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     }
 }

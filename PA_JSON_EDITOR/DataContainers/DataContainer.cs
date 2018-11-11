@@ -17,6 +17,10 @@ namespace PA_JSON_EDITOR
 
     public abstract class DataContainer : IDataContainer
     {
+        //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+        // VARIABLES INITIALISATION (universal)
+
         //Define all possible Types of tokens.
         public enum DataContainerType
         {
@@ -26,9 +30,8 @@ namespace PA_JSON_EDITOR
             Null
         }
 
-        //Data - All DataContainers have to contain their name, tier and type. (All propierties are read only outside)
-        public string Name { get; protected set; } = "";
-        public int Tier { get; protected set; } = 0;
+        public string Name  {get; protected set; } = "";
+        public int Tier {get; protected set; } = 0;
 
         public DataContainerType ContainerType
         { get; protected set; }
@@ -38,49 +41,49 @@ namespace PA_JSON_EDITOR
         //TREE CREATION AND POPULATION
 
         /// <summary>
-        /// Constructor used for recursive tree creation. Forces all types of containers to be able to be created from jtokens
+        /// Constructor used for recursive tree creation.
         /// </summary>
         /// <param name="input_jobject"></param>
         /// <param name="Is_orig_obj"></param>
-        public DataContainer(KeyValuePair<string, JToken> InputToken, int ParentTier, string ParentName)
+        public DataContainer(KeyValuePair<string, JToken> inToken, int parentTier, string parentName)
         {
-            Name = InputToken.Key;
-            Tier = ++ParentTier;
+            Name = inToken.Key;
+            Tier = ++parentTier;
         }
 
         //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
         //GENERAL METHODS (CAN BE USED IN EVERY OBJECT TYPE [primitive, array, complex])
 
-        public string GetTheName()
-        {
-            return Name;
-        }
-
         public DataContainer.DataContainerType GetTheType()
         {
             return ContainerType;
+        }
+
+        public string GetTheName()
+        {
+            return Name;
         }
 
         public abstract List<string> FindValueInData(string key);
 
         public abstract JToken GetTheData();
 
-        public virtual IDataContainer CreateNewDataContainer(KeyValuePair<string, JToken> InputToken, int ParentTier, string ParentName)
+        public virtual IDataContainer CreateNewDataContainer(KeyValuePair<string, JToken> inToken, int parentTier, string parentName)
         {
-            switch (InputToken.Value.Type)
+            switch (inToken.Value.Type)
             {
                 case JTokenType.Array:
-                    return new DataContainerArray(InputToken, ParentTier, ParentName);
+                    return new DataContainerArray(inToken, parentTier, parentName);
 
                 case JTokenType.Object:
-                    return new DataContainerComplex(InputToken, ParentTier, ParentName);
+                    return new DataContainerComplex(inToken, parentTier, parentName);
 
                 case JTokenType.Null:
-                    return new DataContainerNull(InputToken, ParentTier, ParentName);
+                    return new DataContainerNull(inToken, parentTier, parentName);
 
                 default:
-                    return new DataContainerPrimitive(InputToken, ParentTier, ParentName);
+                    return new DataContainerPrimitive(inToken, parentTier, parentName);
 
             }
             

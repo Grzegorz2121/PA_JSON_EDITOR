@@ -16,7 +16,9 @@ namespace PA_JSON_EDITOR
 {
     class GraphicalContainerArray : GraphicalContainer
     {
-        //For arrays
+        //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+        // VARIABLES INITIALISATION (array)
 
         public Dictionary<int, IGraphicalContainer> ArrayGraphicalElements = new Dictionary<int, IGraphicalContainer>();
 
@@ -29,19 +31,16 @@ namespace PA_JSON_EDITOR
         Button addButton;
         Button deleteButton;
         ListBox listBox;
+
         //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+        // PARENT FUNCTIONALITY OVERRIDE
 
         public GraphicalContainerArray(DataContainerArray dataContainer, Point inLocation, Size inSize, Form parentForm) : base(dataContainer, parentForm, inLocation, inSize)
         {
             slave = dataContainer;
             parent = parentForm;
             location = inLocation;
-            /*
-            foreach (IDataContainer children in dataContainer.GetChilden())
-            {
-                ArrayElements.Add(children.GetTheName(), CreateNewGraphicalContainer(children, parentForm, inLocation, new Size()));
-            }*/
-
 
             panel = CreatePanel(new Point(inLocation.X, inLocation.Y + 100), new Size(100, 100),
                 new Control[]
@@ -54,6 +53,10 @@ namespace PA_JSON_EDITOR
                 parentForm
                 );
         }
+
+        //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+        //CONTAINER SPECYFIC FUNCTIONS
 
         private void AddButtonClick(object sender, EventArgs e)
         {

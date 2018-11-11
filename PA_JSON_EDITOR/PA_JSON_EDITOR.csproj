@@ -58,12 +58,6 @@
     <Compile Include="DataContainers\DataContainerNull.cs" />
     <Compile Include="DataContainers\DataContainerPrimitive.cs" />
     <Compile Include="DataContainers\DataContainerInterfaces.cs" />
-    <Compile Include="GraphicalContainers\Form1.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="GraphicalContainers\Form1.Designer.cs">
-      <DependentUpon>Form1.cs</DependentUpon>
-    </Compile>
     <Compile Include="GraphicalContainers\GraphicalContainer.cs" />
     <Compile Include="GraphicalContainers\GraphicalContainerArray.cs" />
     <Compile Include="GraphicalContainers\GraphicalContainerComplex.cs" />
@@ -76,45 +70,36 @@
     <Compile Include="JsonEditorForm.Designer.cs">
       <DependentUpon>JsonEditorForm.cs</DependentUpon>
     </Compile>
-    <Compile Include="HashContainer.cs" />
+    <Compile Include="HashContainer\HashContainer.cs" />
     <Compile Include="MainForm.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="MainForm.Designer.cs">
       <DependentUpon>MainForm.cs</DependentUpon>
     </Compile>
-    <Compile Include="PapaConverter\PapaConverter.cs" />
-    <Compile Include="PapaConverter\PapaForm.cs">
+    <Compile Include="PapaEditor\PapaFile.cs" />
+    <Compile Include="PapaEditor\PapaEditorForm.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="PapaConverter\PapaForm.Designer.cs">
-      <DependentUpon>PapaForm.cs</DependentUpon>
+    <Compile Include="PapaEditor\PapaEditorForm.Designer.cs">
+      <DependentUpon>PapaEditorForm.cs</DependentUpon>
     </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="ScannerForm.cs">
+    <Compile Include="JsonPropertiesScannerForm.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="ScannerForm.Designer.cs">
-      <DependentUpon>ScannerForm.cs</DependentUpon>
+    <Compile Include="JsonPropertiesScannerForm.Designer.cs">
+      <DependentUpon>JsonPropertiesScannerForm.cs</DependentUpon>
     </Compile>
-    <Compile Include="VisualAdjustment.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="VisualAdjustment.Designer.cs">
-      <DependentUpon>VisualAdjustment.cs</DependentUpon>
-    </Compile>
-    <EmbeddedResource Include="GraphicalContainers\Form1.resx">
-      <DependentUpon>Form1.cs</DependentUpon>
-    </EmbeddedResource>
     <EmbeddedResource Include="JsonEditorForm.resx">
       <DependentUpon>JsonEditorForm.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="MainForm.resx">
       <DependentUpon>MainForm.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="PapaConverter\PapaForm.resx">
-      <DependentUpon>PapaForm.cs</DependentUpon>
+    <EmbeddedResource Include="PapaEditor\PapaEditorForm.resx">
+      <DependentUpon>PapaEditorForm.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
@@ -125,11 +110,8 @@
       <AutoGen>True</AutoGen>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
-    <EmbeddedResource Include="ScannerForm.resx">
-      <DependentUpon>ScannerForm.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="VisualAdjustment.resx">
-      <DependentUpon>VisualAdjustment.cs</DependentUpon>
+    <EmbeddedResource Include="JsonPropertiesScannerForm.resx">
+      <DependentUpon>JsonPropertiesScannerForm.cs</DependentUpon>
     </EmbeddedResource>
     <None Include="packages.config" />
     <None Include="Properties\Settings.settings">
@@ -144,6 +126,9 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="obj\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

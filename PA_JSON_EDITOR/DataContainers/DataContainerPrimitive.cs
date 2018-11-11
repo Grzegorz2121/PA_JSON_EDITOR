@@ -16,11 +16,16 @@ namespace PA_JSON_EDITOR
 {
     class DataContainerPrimitive : DataContainer, IDataPrimitive
     {
-        //For primitive containers
+        //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+        // VARIABLES INITIALISATION (primitive)
+
         public object PrimitiveElement = new object();
         protected Type PrimitiveType;
 
         //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+        // PARENT FUNCTIONALITY OVERRIDE
 
         public DataContainerPrimitive(KeyValuePair<string, JToken> InTokenPair, int InParentTier, string InParentName) : base(InTokenPair, InParentTier, InParentName)
         {
@@ -62,6 +67,8 @@ namespace PA_JSON_EDITOR
 
         //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
+        //CONTAINER SPECYFIC FUNCTIONS
+
         public object GetValue()
         {
             return PrimitiveElement;
@@ -71,5 +78,7 @@ namespace PA_JSON_EDITOR
         {
             PrimitiveElement = newObject;
         }
+
+        //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     }
 }

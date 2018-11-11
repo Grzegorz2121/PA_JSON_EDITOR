@@ -7,27 +7,27 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using PA_JSON_EDITOR.PapaConverter;
+using PA_JSON_EDITOR.PapaEditor;
 
-namespace PA_JSON_EDITOR.PapaConverter
+namespace PA_JSON_EDITOR.PapaEditor
 {
-    public partial class PapaForm : Form
+    public partial class PapaEditorForm : Form
     {
-        PapaConverter papaConverter;
+        PapaFile papa_file;
 
-        public PapaForm()
+        public PapaEditorForm()
         {
             InitializeComponent();
         }
 
         private void button1_Click(object sender, EventArgs e)
         {
-            openFileDialog1.ShowDialog();
+            open_file_dialog.ShowDialog();
         }
 
-        private void openFileDialog1_FileOk(object sender, CancelEventArgs e)
+        private void open_file_dialog_FileOk(object sender, CancelEventArgs e)
         {
-            papaConverter = new PapaConverter(openFileDialog1.FileName);
+            papa_file = new PapaFile(open_file_dialog.FileName);
         }
     }
 }

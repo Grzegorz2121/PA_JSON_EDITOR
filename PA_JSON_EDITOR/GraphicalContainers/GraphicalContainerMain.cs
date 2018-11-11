@@ -16,9 +16,15 @@ namespace PA_JSON_EDITOR
 {
     public class GraphicalContainerMain
     {
-        //For complex containers
-        //For complex containers
+        //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+        // VARIABLES INITIALISATION (complex)
+
         public Dictionary<string, IGraphicalContainer> GraphicalElements = new Dictionary<string, IGraphicalContainer>();
+
+        //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+        // FILE READING FUNCTIONALITY + CHILD CREATION
 
         public GraphicalContainerMain(DataContainerMain mainDataContainer, Form mainForm , Point startLocation)
         {
@@ -29,12 +35,11 @@ namespace PA_JSON_EDITOR
                 startLocation = new Point(startLocation.X + 103, startLocation.Y);
             }
             startLocation = temp;
-            /*
-           foreach(IGraphicalContainer gc in GraphicalElements.Values)
-            {
-                gc.Show();
-            }*/
         }
+
+        //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+        //CONTAINER SPECYFIC FUNCTIONS
 
         private IGraphicalContainer[] CreateNewGraphicalContainer(IDataContainer[] dataContainers, Form parentForm, Point inLoc, Size inSize)
         {
@@ -69,7 +74,5 @@ namespace PA_JSON_EDITOR
         }
 
         //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-        
     }
 }

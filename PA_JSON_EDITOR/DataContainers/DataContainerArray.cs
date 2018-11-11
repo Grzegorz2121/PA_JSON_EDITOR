@@ -16,13 +16,18 @@ namespace PA_JSON_EDITOR
 {
     class DataContainerArray : DataContainer, IDataArray
     {
-        //For arrays
-        public int ArrayAmount = 0;
+        //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+        // VARIABLES INITIALISATION (array)
+
+        public int array_amount = 0;
         public Dictionary<int, IDataContainer> ArrayElements = new Dictionary<int, IDataContainer>();
 
         protected DataContainer ArraysTemplate;
 
         //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+        // PARENT FUNCTIONALITY OVERRIDE
 
         public DataContainerArray(KeyValuePair<string, JToken> InTokenPair, int InParentTier, string InParentName) : base(InTokenPair, InParentTier, InParentName)
         {
@@ -31,8 +36,8 @@ namespace PA_JSON_EDITOR
             //Array will create template and redirect all data from other array members to it.
             foreach (JToken ArraysToken in (JArray)InTokenPair.Value)
             {
-                ArrayElements.Add(ArrayAmount, CreateNewDataContainer(new KeyValuePair<string, JToken>(ArrayAmount.ToString(), ArraysToken), Tier, Name));
-                ArrayAmount++;
+                ArrayElements.Add(array_amount, CreateNewDataContainer(new KeyValuePair<string, JToken>(array_amount.ToString(), ArraysToken), Tier, Name));
+                array_amount++;
             }
         }
 
@@ -69,11 +74,8 @@ namespace PA_JSON_EDITOR
         }
 
         //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        /*
-        public int GetAmountOfItems()
-        {
-            return ArrayElements.Count;
-        }*/
+
+        //CONTAINER SPECYFIC FUNCTIONS
 
         public IDataContainer GetChild(int position)
         {
@@ -84,22 +86,6 @@ namespace PA_JSON_EDITOR
         {
             return ArrayElements;
         }
-
-        /*
-        public int[] GetItemNames()
-        {
-            List<int> temp = new List<int>();
-            foreach(int i in ArrayElements.Keys)
-            {
-                temp.Add(i);
-            }
-            return temp.ToArray<int>();
-        }*/
-        /*
-        public IDataContainer[] GetChilden()
-        {
-            return ArrayElements.Values.ToArray<IDataContainer>();
-        }*/
 
         public void AddItem(IDataContainer newValue)
         {
@@ -115,5 +101,7 @@ namespace PA_JSON_EDITOR
         {
             ArrayElements.Remove(position);
         }
+
+        //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     }
 }

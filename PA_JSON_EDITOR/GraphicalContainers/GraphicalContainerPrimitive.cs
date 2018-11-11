@@ -16,18 +16,20 @@ namespace PA_JSON_EDITOR
 {
     class GraphicalContainerPrimitive : GraphicalContainer
     {
-        //For primitive containers
+        //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-       // DataContainerPrimitive slave;
+        // VARIABLES INITIALISATION (complex)
 
         Panel panel;
         Button editButton;
         TextBox textBox;
+
         //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+        // PARENT FUNCTIONALITY OVERRIDE
 
         public GraphicalContainerPrimitive(DataContainerPrimitive dataContainer, Point inLocation, Size inSize, Form parentForm) : base(dataContainer, parentForm, inLocation, inSize)
         {
-            // slave = dataContainer as DataContainerPrimitive;
             panel = CreatePanel(new Point(inLocation.X, inLocation.Y + 100), new Size(100, 100),
                 new Control[]
                 {
@@ -38,6 +40,10 @@ namespace PA_JSON_EDITOR
                 );
             
         }
+
+        //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+        //CONTAINER SPECYFIC FUNCTIONS
 
         private void EditButtonClick(object sender, EventArgs e)
         {
@@ -68,7 +74,7 @@ namespace PA_JSON_EDITOR
             editButton = null;
             panel = null;
         }
-        //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
+        //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     }
 }

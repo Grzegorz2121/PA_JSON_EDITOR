@@ -18,6 +18,12 @@ namespace PA_JSON_EDITOR
     public class HashContainer
     {
 
+        //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+            // OBSOLETE CLASS! TODO: REFACTOR IT TO MAKE IT SIMILAR TO DATA,GRAPHICAL CONTAINERS!
+
+        //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
         public enum HashContainerType
         {
             Primitive,
@@ -336,87 +342,11 @@ namespace PA_JSON_EDITOR
             }
 
         }
+
         //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
+        // OBSOLETE CLASS! TODO: REFACTOR IT TO MAKE IT SIMILAR TO DATA,GRAPHICAL CONTAINERS!
+
+        //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     }
 }
-
-
-
-
-
-
-
-
-
-
-/*
-string json = JsonConvert.SerializeObject(account, Formatting.Indented);
-// {
-//   "Email": "james@example.com",
-//   "Active": true,
-//   "CreatedDate": "2013-01-20T00:00:00Z",
-//   "Roles": [
-//     "User",
-//     "Admin"
-//   ]
-// }*/
-
-
-
-
-
-/*
- *         public void CreateTheDump(string path)
-    {
-        Dictionary<string, object> content = new Dictionary<string, object>();
-
-        switch (ContainerType)
-        {
-            case HashContainerType.Complex:
-                content.Add("Name", Name);
-                content.Add("Tier", Tier);
-                content.Add("Type", ContainerType.ToString());
-                content.Add("Children", ComplexElements.Keys);
-                using (StreamWriter file = File.CreateText(path + @"\dump" + Tier + @".json"))
-                {
-                    JsonSerializer js = new JsonSerializer();
-                    js.Serialize(file, content);
-                }
-
-                foreach(HashContainer Children in ComplexElements.Values)
-                {
-                    Children.CreateTheDump(path);
-                }
-                break;
-
-            case HashContainerType.Primitive:
-                content.Add("Name", Name);
-                content.Add("Tier", Tier);
-                content.Add("Type", ContainerType.ToString());
-                content.Add("Values", PrimitiveElements);
-                using (StreamWriter file = File.CreateText(path + @"dump" + Tier + Name + @".json"))
-                {
-                    JsonSerializer js = new JsonSerializer();
-                    js.Serialize(file, content);
-                }
-                break;
-
-            case HashContainerType.Array:
-                content.Add("Name", Name);
-                content.Add("Tier", Tier);
-                content.Add("Type", ContainerType.ToString());
-                content.Add("Template", ArraysTemplate.Name);
-                using (StreamWriter file = File.CreateText(path + @"\dump" + Tier + Name + @".json"))
-                {
-                    JsonSerializer js = new JsonSerializer();
-                    js.Serialize(file, content);
-                }
-
-                ArraysTemplate.CreateTheDump(path);
-                break;
-        }
-
-
-    }
-     */
